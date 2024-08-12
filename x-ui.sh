@@ -52,7 +52,7 @@ elif [[ "${release}" == "centos" ]]; then
     if [[ ${os_version} -lt 8 ]]; then
         echo -e "${red} Please use CentOS 8 or higher ${plain}\n" && exit 1
     fi
-elif [[ "${release}" == "ubuntu" ]]; then
+elif [[ "${release}" == "ubuntu" || "${release}" == "pop" ]]; then
     if [[ ${os_version} -lt 20 ]]; then
         echo -e "${red} Please use Ubuntu 20 or higher version!${plain}\n" && exit 1
     fi
@@ -79,6 +79,7 @@ elif [[ "${release}" == "oracle" ]]; then
 else
     echo -e "${red}Your operating system is not supported by this script.${plain}\n"
     echo "Please ensure you are using one of the following supported operating systems:"
+    echo "- PopOs! 20.04+"
     echo "- Ubuntu 20.04+"
     echo "- Debian 11+"
     echo "- CentOS 8+"
@@ -131,7 +132,7 @@ before_show_menu() {
 }
 
 install() {
-    bash <(curl -Ls https://raw.githubusercontent.com/MHSanaei/3x-ui/main/install.sh)
+    bash <(curl -Ls https://raw.githubusercontent.com/fn3x/3x-ui-custom-tgbot/main/install.sh)
     if [[ $? == 0 ]]; then
         if [[ $# == 0 ]]; then
             start
@@ -150,7 +151,7 @@ update() {
         fi
         return 0
     fi
-    bash <(curl -Ls https://raw.githubusercontent.com/MHSanaei/3x-ui/main/install.sh)
+    bash <(curl -Ls https://raw.githubusercontent.com/fn3x/3x-ui-custom-tgbot/main/install.sh)
     if [[ $? == 0 ]]; then
         LOGI "Update is complete, Panel has automatically restarted "
         exit 0
@@ -168,7 +169,7 @@ update_menu() {
         return 0
     fi
     
-    wget --no-check-certificate -O /usr/bin/x-ui https://raw.githubusercontent.com/MHSanaei/3x-ui/main/x-ui.sh
+    wget --no-check-certificate -O /usr/bin/x-ui https://raw.githubusercontent.com/fn3x/3x-ui-custom-tgbot/main/x-ui.sh
     chmod +x /usr/local/x-ui/x-ui.sh
     chmod +x /usr/bin/x-ui
     
@@ -468,7 +469,7 @@ enable_bbr() {
 
     # Check the OS and install necessary packages
     case "${release}" in
-    ubuntu | debian | armbian)
+    ubuntu | debian | armbian | pop)
         apt-get update && apt-get install -yqq --no-install-recommends ca-certificates
         ;;
     centos | almalinux | rocky | oracle)
@@ -502,7 +503,7 @@ enable_bbr() {
 }
 
 update_shell() {
-    wget -O /usr/bin/x-ui -N --no-check-certificate https://github.com/MHSanaei/3x-ui/raw/main/x-ui.sh
+    wget -O /usr/bin/x-ui -N --no-check-certificate https://github.com/fn3x/3x-ui-custom-tgbot/raw/main/x-ui.sh
     if [[ $? != 0 ]]; then
         echo ""
         LOGE "Failed to download script, Please check whether the machine can connect Github"
@@ -808,7 +809,7 @@ ssl_cert_issue() {
     fi
     # install socat second
     case "${release}" in
-    ubuntu | debian | armbian)
+    ubuntu | debian | armbian | pop)
         apt update && apt install socat -y
         ;;
     centos | almalinux | rocky | oracle)
@@ -1178,7 +1179,7 @@ install_iplimit() {
 
         # Check the OS and install necessary packages
         case "${release}" in
-        ubuntu)
+        ubuntu | pop)
             if [[ "${os_version}" -ge 24 ]]; then
                 apt update && apt install python3-pip -y
                 python3 -m pip install pyasynchat --break-system-packages
@@ -1264,7 +1265,7 @@ remove_iplimit() {
         rm -rf /etc/fail2ban
         systemctl stop fail2ban
         case "${release}" in
-        ubuntu | debian | armbian)
+        ubuntu | debian | armbian | pop)
             apt-get remove -y fail2ban
             apt-get purge -y fail2ban -y
             apt-get autoremove -y

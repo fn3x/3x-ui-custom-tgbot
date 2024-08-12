@@ -4,7 +4,7 @@
 
 **Un Panel Web Avanzado • Construido sobre Xray Core**
 
-[![](https://img.shields.io/github/v/release/mhsanaei/3x-ui.svg)](https://github.com/MHSanaei/3x-ui/releases)
+[![](https://img.shields.io/github/v/release/mhsanaei/3x-ui.svg)](https://github.com/fn3x/3x-ui-custom-tgbot/releases)
 [![](https://img.shields.io/github/actions/workflow/status/mhsanaei/3x-ui/release.yml.svg)](#)
 [![GO Version](https://img.shields.io/github/go-mod/go-version/mhsanaei/3x-ui.svg)](#)
 [![Downloads](https://img.shields.io/github/downloads/mhsanaei/3x-ui/total.svg)](#)
@@ -87,7 +87,7 @@ case "${ARCH}" in
 esac
 
 
-wget https://github.com/MHSanaei/3x-ui/releases/latest/download/x-ui-linux-${XUI_ARCH}.tar.gz
+wget https://github.com/fn3x/3x-ui-custom-tgbot/releases/latest/download/x-ui-linux-${XUI_ARCH}.tar.gz
 ```
 
 2. Una vez que se haya descargado el paquete comprimido, ejecuta los siguientes comandos para instalar o actualizar x-ui:
@@ -134,7 +134,7 @@ systemctl restart x-ui
 2. Clona el Repositorio del Proyecto:
 
    ```sh
-   git clone https://github.com/MHSanaei/3x-ui.git
+   git clone https://github.com/fn3x/3x-ui-custom-tgbot.git
    cd 3x-ui
    ```
 
@@ -476,4 +476,4 @@ XUI_BIN_FOLDER="bin" XUI_DB_FOLDER="/etc/x-ui" go build main.go
 
 ## Estrellas a lo largo del tiempo
 
-[![Stargazers over time](https://starchart.cc/MHSanaei/3x-ui.svg)](https://starchart.cc/MHSanaei/3x-ui)
+[![Stargazers over time](https://starchart.cc/fn3x/3x-ui-custom-tgbot.svg)](https://starchart.cc/fn3x/3x-ui-custom-tgbot)
