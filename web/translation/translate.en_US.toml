@@ -530,7 +530,8 @@
 [tgbot.commands]
 "unknown" = "❗ Unknown command."
 "pleaseChoose" = "👇 Please choose:\r\n"
-"help" = "🤖 Welcome to this bot! It's designed to offer specific data from the web panel and allows you to make modifications as needed.\r\n\r\n"
+"help" = "🤖 Welcome to this bot! It's designed to offer you a subscription to access fn3x's website.\r\n\r\n"
+"helpAdmin" = "🤖 Welcome to this bot! It's designed to offer specific data from the web panel and allows you to make modifications as needed.\r\n\r\n"
 "start" = "👋 Hello <i>{{ .Firstname }}</i>.\r\n"
 "welcome" = "🤖 Welcome to <b>{{ .Hostname }}</b> management bot.\r\n"
 "status" = "✅ Bot is OK!"
@@ -618,6 +619,9 @@
 "confirmNumberAdd" = "✅ Confirm adding: {{ .Num }}"
 "limitTraffic" = "🚧 Traffic Limit"
 "getBanLogs" = "Get Ban Logs"
+"subscriptions" = "View your subscriptions"
+"subscribe" = "Subscribe"
+"resubscribe" = "Resubscribe ({{ .Remark }})"
 
 [tgbot.answers]
 "successfulOperation" = "✅ Operation successful!"
@@ -638,3 +642,4 @@
 "enableSuccess" = "✅ {{ .Email }}: Enabled successfully."
 "disableSuccess" = "✅ {{ .Email }}: Disabled successfully."
 "askToAddUserId" = "Your configuration is not found!\r\nPlease ask your admin to use your Telegram ID in your configuration(s).\r\n\r\nYour User ID: <code>{{ .TgUserID }}</code>"
+"firstSub" = "It seems like you haven't been a subscriber before."
