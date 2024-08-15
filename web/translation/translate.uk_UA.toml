@@ -618,6 +618,9 @@
 "confirmNumberAdd" = "✅ Підтвердити додавання: {{ .Num }}"
 "limitTraffic" = "🚧 Ліміт трафіку"
 "getBanLogs" = "Отримати журнали заборон"
+"subscriptions" = "View your subscriptions"
+"subscribe" = "Subscribe"
+"resubscribe" = "Resubscribe ({{ .Remark }})"
 
 [tgbot.answers]
 "successfulOperation" = "✅ Операція успішна!"
@@ -638,3 +641,5 @@
 "enableSuccess" = "✅ {{ .Email }}: Увімкнути успішно."
 "disableSuccess" = "✅ {{ .Email }}: Успішно вимкнено."
 "askToAddUserId" = "Вашу конфігурацію не знайдено!\r\nБудь ласка, попросіть свого адміністратора використовувати ваш ідентифікатор Telegram у вашій конфігурації.\r\n\r\nВаш ідентифікатор користувача: <code>{{ .TgUserID }}</code>"
+"subscriptions" = "Your subscriptions:"
+"subscribe" = "Preparing yookassa for a payment..."

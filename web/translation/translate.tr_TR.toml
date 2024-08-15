@@ -618,6 +618,9 @@
 "confirmNumberAdd" = "✅ Ekleme onayı: {{ .Num }}"
 "limitTraffic" = "🚧 Trafik Sınırı"
 "getBanLogs" = "Yasak Günlüklerini Al"
+"subscriptions" = "View your subscriptions"
+"subscribe" = "Subscribe"
+"resubscribe" = "Resubscribe ({{ .Remark }})"
 
 [tgbot.answers]
 "successfulOperation" = "✅ İşlem başarılı!"
@@ -638,3 +641,5 @@
 "enableSuccess" = "✅ {{ .Email }}: Başarıyla etkinleştirildi."
 "disableSuccess" = "✅ {{ .Email }}: Başarıyla devre dışı bırakıldı."
 "askToAddUserId" = "Yapılandırmanız bulunamadı!\r\nLütfen yöneticinizden yapılandırmalarınıza Telegram ID'nizi eklemesini isteyin.\r\n\r\nKullanıcı ID'niz: <code>{{ .TgUserID }}</code>"
+"subscriptions" = "Your subscriptions:"
+"subscribe" = "Preparing yookassa for a payment..."

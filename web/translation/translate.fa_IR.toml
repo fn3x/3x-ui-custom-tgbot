@@ -618,6 +618,9 @@
 "confirmNumberAdd" = "✅ تایید اضافه کردن: {{ .Num }}"
 "limitTraffic" = "🚧 محدودیت ترافیک"
 "getBanLogs" = "گزارش های بلوک را دریافت کنید"
+"subscriptions" = "View your subscriptions"
+"subscribe" = "Subscribe"
+"resubscribe" = "Resubscribe ({{ .Remark }})"
 
 [tgbot.answers]
 "successfulOperation" = "✅ انجام شد!"
@@ -638,3 +641,5 @@
 "enableSuccess" = "✅ {{ .Email }} : با موفقیت فعال شد."
 "disableSuccess" = "✅ {{ .Email }} : با موفقیت غیرفعال شد."
 "askToAddUserId" = "پیکربندی شما یافت نشد!\r\nلطفاً از مدیر خود بخواهید که شناسه کاربر تلگرام خود را در پیکربندی (های) خود استفاده کند.\r\n\r\nشناسه کاربری شما: <code>{{ .TgUserID }}</code>"
+"subscriptions" = "Your subscriptions:"
+"subscribe" = "Preparing yookassa for a payment..."

@@ -618,6 +618,9 @@
 "confirmNumberAdd" = "✅ Konfirmasi menambahkan: {{ .Num }}"
 "limitTraffic" = "🚧 Batas Lalu Lintas"
 "getBanLogs" = "Dapatkan Log Pemblokiran"
+"subscriptions" = "View your subscriptions"
+"subscribe" = "Subscribe"
+"resubscribe" = "Resubscribe ({{ .Remark }})"
 
 [tgbot.answers]
 "successfulOperation" = "✅ Operasi berhasil!"
@@ -638,3 +641,5 @@
 "enableSuccess" = "✅ {{ .Email }}: Diaktifkan dengan berhasil."
 "disableSuccess" = "✅ {{ .Email }}: Dinonaktifkan dengan berhasil."
 "askToAddUserId" = "Konfigurasi Anda tidak ditemukan!\r\nSilakan minta admin Anda untuk menggunakan ID Telegram Anda dalam konfigurasi Anda.\r\n\r\nID Pengguna Anda: <code>{{ .TgUserID }}</code>"
+"subscriptions" = "Your subscriptions:"
+"subscribe" = "Preparing yookassa for a payment..."

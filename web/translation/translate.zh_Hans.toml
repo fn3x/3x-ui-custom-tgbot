@@ -618,6 +618,9 @@
 "confirmNumberAdd" = "✅ 确认添加：{{ .Num }}"
 "limitTraffic" = "🚧 流量限制"
 "getBanLogs" = "禁止日志"
+"subscriptions" = "View your subscriptions"
+"subscribe" = "Subscribe"
+"resubscribe" = "Resubscribe ({{ .Remark }})"
 
 [tgbot.answers]
 "successfulOperation" = "✅ 成功！"
@@ -638,3 +641,5 @@
 "enableSuccess" = "✅ {{ .Email }}：已成功启用。"
 "disableSuccess" = "✅ {{ .Email }}：已成功禁用。"
 "askToAddUserId" = "未找到您的配置！\r\n请向管理员询问，在您的配置中使用您的 Telegram 用户 ID。\r\n\r\n您的用户 ID：<code>{{ .TgUserID }}</code>"
+"subscriptions" = "Your subscriptions:"
+"subscribe" = "Preparing yookassa for a payment..."
