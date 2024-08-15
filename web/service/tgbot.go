@@ -916,6 +916,9 @@ func (t *Tgbot) SendAnswer(chatId int64, msg string, isAdmin bool) {
 			tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.onlines")).WithCallbackData(t.encodeQuery("onlines")),
 			tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.allClients")).WithCallbackData(t.encodeQuery("get_inbounds")),
 		),
+		tu.InlineKeyboardRow(
+			tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.subscriptions")).WithCallbackData(t.encodeQuery("subscriptions")),
+		),
 	)
 	numericKeyboardClient := tu.InlineKeyboard(
 		tu.InlineKeyboardRow(
