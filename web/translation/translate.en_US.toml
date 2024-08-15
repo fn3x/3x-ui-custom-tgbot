@@ -637,3 +637,5 @@
 "prepareLink" = "Preparing your payment link..."
 "resubscribe" = "Resubscribe ({{ .Email }})"
 "firstSub" = "It seems like you haven't been a subscriber before."
+"subscriptions" = "Your subscriptions:"
+"subscribe" = "Preparing yookassa for a payment..."
