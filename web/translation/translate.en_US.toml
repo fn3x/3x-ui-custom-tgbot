@@ -643,3 +643,5 @@
 "disableSuccess" = "✅ {{ .Email }}: Disabled successfully."
 "askToAddUserId" = "Your configuration is not found!\r\nPlease ask your admin to use your Telegram ID in your configuration(s).\r\n\r\nYour User ID: <code>{{ .TgUserID }}</code>"
 "firstSub" = "It seems like you haven't been a subscriber before."
+"subscriptions" = "Your subscriptions:"
+"subscribe" = "Preparing yookassa for a payment..."

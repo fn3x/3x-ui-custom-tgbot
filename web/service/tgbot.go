@@ -790,53 +790,69 @@ func (t *Tgbot) answerCallback(callbackQuery *telego.CallbackQuery, isAdmin bool
 		dataArray = strings.Split(decodedQuery, " ")
 	}
 
-	switch callbackQuery.Data {
-	case "get_usage":
-		t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.serverUsage"))
-		t.getServerUsage(chatId)
-	case "usage_refresh":
-		t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.successfulOperation"))
-		t.getServerUsage(chatId, callbackQuery.Message.GetMessageID())
-	case "inbounds":
-		t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.getInbounds"))
-		t.SendMsgToTgbot(chatId, t.getInboundUsages())
-	case "deplete_soon":
-		t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.depleteSoon"))
-		t.getExhausted(chatId)
-	case "get_backup":
-		t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.dbBackup"))
-		t.sendBackup(chatId)
-	case "get_banlogs":
-		t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.getBanLogs"))
-		t.sendBanLogs(chatId, true)
-	case "client_traffic":
-		tgUserID := callbackQuery.From.ID
-		t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.clientUsage"))
-		t.getClientUsage(chatId, tgUserID)
-	case "client_commands":
-		t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.commands"))
-		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.commands.helpClientCommands"))
-	case "onlines":
-		t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.onlines"))
-		t.onlineClients(chatId)
-	case "onlines_refresh":
-		t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.successfulOperation"))
-		t.onlineClients(chatId, callbackQuery.Message.GetMessageID())
-	case "subscriptions":
-		email := ""
-		if dataArray[0] == "subscriptions" {
-			email = dataArray[1]
-		} else {
-			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.errorOperation"))
-			return
+	if len(dataArray) == 1 {
+		switch callbackQuery.Data {
+		case "get_usage":
+			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.serverUsage"))
+			t.getServerUsage(chatId)
+		case "usage_refresh":
+			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.successfulOperation"))
+			t.getServerUsage(chatId, callbackQuery.Message.GetMessageID())
+		case "inbounds":
+			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.getInbounds"))
+			t.SendMsgToTgbot(chatId, t.getInboundUsages())
+		case "deplete_soon":
+			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.depleteSoon"))
+			t.getExhausted(chatId)
+		case "get_backup":
+			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.dbBackup"))
+			t.sendBackup(chatId)
+		case "get_banlogs":
+			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.getBanLogs"))
+			t.sendBanLogs(chatId, true)
+		case "client_traffic":
+			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.clientUsage"))
+			t.getClientUsage(chatId, callbackQuery.From.ID)
+		case "client_commands":
+			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.commands"))
+			t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.commands.helpClientCommands"))
+		case "onlines":
+			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.onlines"))
+			t.onlineClients(chatId)
+		case "onlines_refresh":
+			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.successfulOperation"))
+			t.onlineClients(chatId, callbackQuery.Message.GetMessageID())
+		case "commands":
+			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.commands"))
+			t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.commands.helpAdminCommands"))
 		}
+	} else {
+		switch dataArray[0] {
+		case "subscribe":
+			email := ""
+			if dataArray[0] == "subscribe" {
+				email = dataArray[1]
+			} else {
+				t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.errorOperation"))
+				return
+			}
 
-		tgUserID := callbackQuery.From.ID
-		t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.subscriptions"))
-		t.sendSubscriptions(chatId, tgUserID, email)
-	case "commands":
-		t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.commands"))
-		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.commands.helpAdminCommands"))
+			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.subscribe"))
+			t.sendPaymentLink(chatId, callbackQuery.From.ID, email)
+
+		case "subscriptions":
+			email := ""
+			if dataArray[0] == "subscriptions" {
+				email = dataArray[1]
+			} else {
+				t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.errorOperation"))
+				return
+			}
+
+			tgUserID := callbackQuery.From.ID
+			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.subscriptions"))
+			t.sendSubscriptions(chatId, tgUserID, email)
+		}
 	}
 }
 
@@ -1664,6 +1680,11 @@ func (t *Tgbot) sendSubscriptions(chatId int64, tgUserId int64, email string) {
 
 	inlineKeyboard := tu.InlineKeyboard(tu.InlineKeyboardRow(buttons...))
 	t.SendMsgToTgbot(chatId, msg, inlineKeyboard)
+}
+
+func (t *Tgbot) sendPaymentLink(chatId int64, tgUserId int64, email string) {
+	msg := fmt.Sprintf("here is your link, %s(%d)!", email, tgUserId)
+	t.SendMsgToTgbot(chatId, msg)
 }
 
 func (t *Tgbot) sendBackup(chatId int64) {
