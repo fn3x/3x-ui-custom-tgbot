@@ -997,6 +997,9 @@ func (t *Tgbot) SendAnswer(chatId int64, msg string, isAdmin bool) {
 		tu.InlineKeyboardRow(
 			tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.subscriptions")).WithCallbackData(t.encodeQuery("subscriptions")),
 		),
+		tu.InlineKeyboardRow(
+			tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.subscriptions")).WithCallbackData(t.encodeQuery("subscriptions")),
+		),
 	)
 	numericKeyboardClient := tu.InlineKeyboard(
 		tu.InlineKeyboardRow(
