@@ -858,6 +858,10 @@ func (t *Tgbot) answerCallback(callbackQuery *telego.CallbackQuery, isAdmin bool
 		case "commands":
 			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.commands"))
 			t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.commands.helpAdminCommands"))
+		case "subscribe":
+			tgUserID := callbackQuery.From.ID
+			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.subscribe"))
+			t.sendPaymentLink(chatId, tgUserID)
 		case "subscriptions":
 			tgUserID := callbackQuery.From.ID
 			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.subscriptions"))
@@ -1753,7 +1757,7 @@ func (t *Tgbot) sendSubscriptions(chatId int64, tgUserId int64) {
 
 	var buttons []telego.InlineKeyboardButton
 
-	buttons = append(buttons, tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.subscribeNew")).WithCallbackData(t.encodeQuery("subscribe_new "+strconv.Itoa(int(tgUserId)))))
+	buttons = append(buttons, tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.subscribe")).WithCallbackData(t.encodeQuery("subscribe")))
 	if len(traffics) == 0 {
 		msg += t.I18nBot("tgbot.firstSub")
 		inlineKeyboard := tu.InlineKeyboard(tu.InlineKeyboardRow(buttons...))

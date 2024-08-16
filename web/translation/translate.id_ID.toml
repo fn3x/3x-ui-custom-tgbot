@@ -502,6 +502,7 @@
 "clients" = "Klien"
 "offline" = "🔴 Offline"
 "online" = "🟢 Online"
+"firstSub" = "It's your first subscription here! We need to attach your telegram to your subscription"
 
 [tgbot.commands]
 "unknown" = "❗ Perintah tidak dikenal."
@@ -624,5 +625,6 @@
 "askToAddUserId" = "Konfigurasi Anda tidak ditemukan!\r\nSilakan minta admin Anda untuk menggunakan ID Telegram Anda dalam konfigurasi Anda.\r\n\r\nID Pengguna Anda: <code>{{ .TgUserID }}</code>"
 "emailNotAvailable" = "{{ .email }} is not available. Choose another name please."
 "emptyEmail" = "Empty name is not allowed"
-"subscriptions" = "Your subscriptions:\r\n"
+"subscribe" = "Subscribe"
+"subscriptions" = "Subscriptions"
 "prepareLink" = "Preparing your payment link..."

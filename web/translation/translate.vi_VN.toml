@@ -502,6 +502,7 @@
 "clients" = "Các người dùng"
 "offline" = "🔴 Ngoại tuyến"
 "online" = "🟢 Trực tuyến"
+"firstSub" = "It's your first subscription here! We need to attach your telegram to your subscription"
 
 [tgbot.commands]
 "unknown" = "❗ Lệnh không rõ"
@@ -625,5 +626,6 @@
 "subscribe" = "Preparing yookassa for a payment..."
 "emailNotAvailable" = "{{ .email }} is not available. Choose another name please."
 "emptyEmail" = "Empty name is not allowed"
-"subscriptions" = "Your subscriptions:\r\n"
+"subscribe" = "Subscribe"
+"subscriptions" = "Subscriptions"
 "prepareLink" = "Preparing your payment link..."
