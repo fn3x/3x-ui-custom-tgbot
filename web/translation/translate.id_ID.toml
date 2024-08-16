@@ -508,6 +508,7 @@
 "unknown" = "❗ Perintah tidak dikenal."
 "pleaseChoose" = "👇 Harap pilih:\r\n"
 "help" = "🤖 Selamat datang di bot ini! Ini dirancang untuk menyediakan data tertentu dari panel web dan memungkinkan Anda melakukan modifikasi sesuai kebutuhan.\r\n\r\n"
+"helpAdmin" = "🤖 Welcome to this bot, administrator! It's designed to offer specific data from the web panel and allows you to make modifications as needed.\r\n\r\n"
 "start" = "👋 Halo <i>{{ .Firstname }}</i>.\r\n"
 "welcome" = "🤖 Selamat datang di <b>{{.Hostname }}</b> bot managemen.\r\n"
 "status" = "✅ Bot dalam keadaan baik!"

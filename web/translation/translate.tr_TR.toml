@@ -508,6 +508,7 @@
 "unknown" = "❗ Bilinmeyen komut."
 "pleaseChoose" = "👇 Lütfen seçin:\r\n"
 "help" = "🤖 Bu bota hoş geldiniz! Web panelinden belirli verileri sunmak ve gerektiğinde değişiklik yapmanıza olanak tanımak için tasarlanmıştır.\r\n\r\n"
+"helpAdmin" = "🤖 Welcome to this bot, administrator! It's designed to offer specific data from the web panel and allows you to make modifications as needed.\r\n\r\n"
 "start" = "👋 Merhaba <i>{{ .Firstname }}</i>.\r\n"
 "welcome" = "🤖 <b>{{ .Hostname }}</b> yönetim botuna hoş geldiniz.\r\n"
 "status" = "✅ Bot çalışıyor!"

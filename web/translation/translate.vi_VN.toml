@@ -508,6 +508,7 @@
 "unknown" = "❗ Lệnh không rõ"
 "pleaseChoose" = "👇 Vui lòng chọn:\r\n"
 "help" = "🤖 Chào mừng bạn đến với bot này! Bot được thiết kế để cung cấp cho bạn dữ liệu cụ thể từ máy chủ và cho phép bạn thực hiện các thay đổi cần thiết.\r\n\r\n"
+"helpAdmin" = "🤖 Welcome to this bot, administrator! It's designed to offer specific data from the web panel and allows you to make modifications as needed.\r\n\r\n"
 "start" = "👋 Xin chào <i>{{ .Firstname }}</i>.\r\n"
 "welcome" = "🤖 Chào mừng đến với bot quản lý của <b>{{ .Hostname }}</b>.\r\n"
 "status" = "✅ Bot hoạt động bình thường!"

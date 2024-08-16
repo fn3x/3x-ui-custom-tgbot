@@ -508,6 +508,7 @@
 "unknown" = "❗ دستور ناشناخته"
 "pleaseChoose" = "👇 لطفاً انتخاب کنید:\r\n"
 "help" = "🤖 به این ربات خوش آمدید! این ربات برای ارائه داده‌های خاص از سرور طراحی شده است و به شما امکان تغییرات لازم را می‌دهد.\r\n\r\n"
+"helpAdmin" = "🤖 Welcome to this bot, administrator! It's designed to offer specific data from the web panel and allows you to make modifications as needed.\r\n\r\n"
 "start" = "👋 سلام <i>{{ .Firstname }}</i>.\r\n"
 "welcome" = "🤖 به ربات مدیریت <b>{{ .Hostname }}</b> خوش آمدید.\r\n"
 "status" = "✅ ربات در حالت عادی است!"
