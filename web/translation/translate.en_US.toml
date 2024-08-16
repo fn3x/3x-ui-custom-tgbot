@@ -532,7 +532,7 @@
 "unknown" = "❗ Unknown command."
 "pleaseChoose" = "👇 Please choose:\r\n"
 "help" = "🤖 Welcome to this bot! It's designed to offer you a subscription to access fn3x's website.\r\n\r\n"
-"helpAdmin" = "🤖 Welcome to this bot! It's designed to offer specific data from the web panel and allows you to make modifications as needed.\r\n\r\n"
+"helpAdmin" = "🤖 Welcome to this bot, administrator! It's designed to offer specific data from the web panel and allows you to make modifications as needed.\r\n\r\n"
 "start" = "👋 Hello <i>{{ .Firstname }}</i>.\r\n"
 "welcome" = "🤖 Welcome to <b>{{ .Hostname }}</b> management bot.\r\n"
 "status" = "✅ Bot is OK!"

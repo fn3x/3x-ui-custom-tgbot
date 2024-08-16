@@ -532,6 +532,7 @@
 "unknown" = "❗ 未知命令"
 "pleaseChoose" = "👇 请选择：\r\n"
 "help" = "🤖 欢迎使用本机器人！它旨在为您提供来自服务器的特定数据，并允许您进行必要的修改。\r\n\r\n"
+"helpAdmin" = "🤖 Welcome to this bot, administrator! It's designed to offer specific data from the web panel and allows you to make modifications as needed.\r\n\r\n"
 "start" = "👋 你好，<i>{{ .Firstname }}</i>。\r\n"
 "welcome" = "🤖 欢迎来到 <b>{{ .Hostname }}</b> 管理机器人。\r\n"
 "status" = "✅ 机器人正常运行！"
