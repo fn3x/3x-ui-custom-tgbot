@@ -526,6 +526,7 @@
 "clients" = "کلاینت‌ها"
 "offline" = "🔴 آفلاین"
 "online" = "🟢 آنلاین"
+"firstSub" = "It's your first subscription here! We need to attach your telegram to your subscription"
 
 [tgbot.commands]
 "unknown" = "❗ دستور ناشناخته"
@@ -643,5 +644,6 @@
 "askToAddUserId" = "پیکربندی شما یافت نشد!\r\nلطفاً از مدیر خود بخواهید که شناسه کاربر تلگرام خود را در پیکربندی (های) خود استفاده کند.\r\n\r\nشناسه کاربری شما: <code>{{ .TgUserID }}</code>"
 "emailNotAvailable" = "{{ .email }} is not available. Choose another name please."
 "emptyEmail" = "Empty name is not allowed"
-"subscriptions" = "Your subscriptions:\r\n"
+"subscribe" = "Subscribe"
+"subscriptions" = "Subscriptions"
 "prepareLink" = "Preparing your payment link..."

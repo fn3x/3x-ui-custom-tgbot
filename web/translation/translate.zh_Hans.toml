@@ -526,6 +526,7 @@
 "clients" = "客户端"
 "offline" = "🔴 离线"
 "online" = "🟢 在线"
+"firstSub" = "It's your first subscription here! We need to attach your telegram to your subscription"
 
 [tgbot.commands]
 "unknown" = "❗ 未知命令"
@@ -643,5 +644,6 @@
 "askToAddUserId" = "未找到您的配置！\r\n请向管理员询问，在您的配置中使用您的 Telegram 用户 ID。\r\n\r\n您的用户 ID：<code>{{ .TgUserID }}</code>"
 "emailNotAvailable" = "{{ .email }} is not available. Choose another name please."
 "emptyEmail" = "Empty name is not allowed"
-"subscriptions" = "Your subscriptions:\r\n"
+"subscribe" = "Subscribe"
+"subscriptions" = "Subscriptions"
 "prepareLink" = "Preparing your payment link..."
