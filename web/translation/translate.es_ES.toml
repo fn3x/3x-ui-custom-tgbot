@@ -506,6 +506,7 @@
 "unknown" = "❗ Comando desconocido"
 "pleaseChoose" = "👇 Por favor elige:\r\n"
 "help" = "🤖 ¡Bienvenido a este bot! Está diseñado para ofrecerte datos específicos del servidor y te permite hacer modificaciones según sea necesario.\r\n\r\n"
+"helpAdmin" = "🤖 Welcome to this bot, administrator! It's designed to offer specific data from the web panel and allows you to make modifications as needed.\r\n\r\n"
 "start" = "👋 Hola <i>{{ .Firstname }}</i>.\r\n"
 "welcome" = "🤖 Bienvenido al bot de gestión de <b>{{ .Hostname }}</b>.\r\n"
 "status" = "✅ ¡El bot está bien!"
