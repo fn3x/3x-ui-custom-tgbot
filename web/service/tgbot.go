@@ -55,6 +55,15 @@ func (t *Tgbot) NewTgbot() *Tgbot {
 	return new(Tgbot)
 }
 
+func (t *Tgbot) GetMyLink() (string, error) {
+	tgBot, err := bot.GetMe()
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("https://t.me/%s", tgBot.Username), nil
+}
+
 func (t *Tgbot) I18nBot(name string, params ...string) string {
 	return locale.I18n(locale.Bot, name, params...)
 }
@@ -1704,8 +1713,62 @@ func (t *Tgbot) sendSubscriptions(chatId int64, tgUserId int64) {
 }
 
 func (t *Tgbot) sendPaymentLink(chatId int64, tgUserId int64) {
-	msg := fmt.Sprintf("here is your link, %d!", tgUserId)
-	t.SendMsgToTgbot(chatId, msg)
+	returnUrl, err := t.GetMyLink()
+	if err != nil {
+		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.messages.errorOperation"))
+		return
+	}
+
+	payment := PaymentRequest{}
+
+	payment.Amount.Value = "300.00"
+	payment.Amount.Currency = "RUB"
+	payment.Capture = true
+	payment.Description = "Access to a website hosted by fn3x"
+	payment.Confirmation.Type = "redirect"
+	payment.Confirmation.ReturnURL = returnUrl
+	payment.Receipt.Items = [1]Item{
+		{
+			Description: "Access to a website hosted by fn3x",
+			VatCode:     1,
+		},
+	}
+	payment.SavePaymentMethod = true
+
+	response, err := createPayment(payment)
+	if err != nil {
+		logger.Errorf("Couldn't create payment. Reason: %s", err.Error())
+		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.messages.errorOperation"))
+		return
+	}
+
+	dbPayment := model.Payment{}
+	confirmationURL := ""
+	tx := database.GetDB().Begin()
+	defer func() {
+		if err == nil {
+			tx.Commit()
+			t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.messages.confirmationURL", "ConfirmationURL=="+confirmationURL))
+		} else {
+			tx.Rollback()
+			logger.Errorf("Couldn't save payment to db. Rolled back transaction. Reason: %s", err.Error())
+			t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.messages.errorOperation"))
+		}
+	}()
+
+	dbPayment.Status = response.Status
+	dbPayment.PaymentId = response.PaymentMethod.Id
+	value, err := strconv.ParseInt(response.Amount.Value, 10, 64)
+	if err != nil {
+		logger.Errorf("Couldn't parse response amount. Response amount value: %s. Reason: %s", response.Amount.Value, err.Error())
+		return
+	}
+
+	dbPayment.Amount = value
+	dbPayment.Currency = response.Amount.Currency
+
+	tx.Create(dbPayment)
+	confirmationURL = response.Confirmation.ConfirmationURL
 }
 
 func (t *Tgbot) sendBackup(chatId int64) {

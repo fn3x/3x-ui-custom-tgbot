@@ -33,6 +33,7 @@ func initModels() error {
 		&model.Setting{},
 		&model.InboundClientIps{},
 		&xray.ClientTraffic{},
+		&model.Payment{},
 	}
 	for _, model := range models {
 		if err := db.AutoMigrate(model); err != nil {
