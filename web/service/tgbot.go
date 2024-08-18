@@ -1835,7 +1835,7 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64) {
 	payment.Amount.Currency = itemCurrency
 	payment.Capture = true
 	payment.Description = "Access to a website hosted by fn3x"
-	payment.Confirmation.Type = "redirect"
+	payment.Confirmation.Type = "mobile_application"
 	payment.Confirmation.ReturnURL = returnUrl
 	payment.Receipt.Customer.Email = email
 	payment.Receipt.Items = [1]Item{
@@ -1867,6 +1867,9 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64) {
 		return
 	}
 
+	prettyResponse, _ := json.MarshalIndent(response, "", "  ")
+	logger.Infof("Response:%s\r\n", prettyResponse)
+
 	dbPayment := model.Payment{}
 	confirmationURL := ""
 	tx := database.GetDB().Begin()
@@ -1876,8 +1879,7 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64) {
 			t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.messages.confirmationURL", "ConfirmationURL=="+confirmationURL))
 		} else {
 			tx.Rollback()
-			prettyResponse, _ := json.MarshalIndent(response, "", "  ")
-			logger.Errorf("Couldn't save payment to db. Rolled back transaction.\r\nResponse: %s\r\nReason: %s", string(prettyResponse), err.Error())
+			logger.Errorf("Couldn't save payment to db. Rolled back transaction.\r\nReason: %s", err.Error())
 			t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
 		}
 	}()
@@ -1895,7 +1897,7 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64) {
 	dbPayment.Amount = value
 	dbPayment.Currency = response.Amount.Currency
 
-	tx.Create(dbPayment)
+	tx.Model(model.Payment{}).Create(dbPayment)
 	confirmationURL = response.Confirmation.ConfirmationURL
 }
 
