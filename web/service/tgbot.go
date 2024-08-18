@@ -1724,12 +1724,20 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64) {
 	const itemValue = "300.00"
 	const itemCurrency = "RUB"
 
+	email, err := t.settingService.GetEmail()
+	if err != nil {
+		logger.Errorf("Couldn't get email for receipts. Reason: %s", err.Error())
+		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
+		return
+	}
+
 	payment.Amount.Value = itemValue
 	payment.Amount.Currency = itemCurrency
 	payment.Capture = true
 	payment.Description = "Access to a website hosted by fn3x"
 	payment.Confirmation.Type = "redirect"
 	payment.Confirmation.ReturnURL = returnUrl
+	payment.Customer.Email = email
 	payment.Receipt.Items = [1]Item{
 		{
 			Description: "Access to a website hosted by fn3x",
@@ -1747,6 +1755,7 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64) {
 	if err != nil {
 		logger.Errorf("Couldn't get yookassa credentials. Reason: %s", err.Error())
 		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
+		return
 	}
 
 	response, err := createPayment(payment, shopId, apiKey)

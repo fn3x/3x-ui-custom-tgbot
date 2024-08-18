@@ -502,6 +502,14 @@ func (s *SettingService) GetIpLimitEnable() (bool, error) {
 	return (accessLogPath != "none" && accessLogPath != ""), nil
 }
 
+func (s *SettingService) SetEmail(email string) error {
+	return s.setString("email", email)
+}
+
+func (s *SettingService) GetEmail() (string, error) {
+	return s.getString("email")
+}
+
 func (s *SettingService) UpdateAllSetting(allSetting *entity.AllSetting) error {
 	if err := allSetting.CheckValid(); err != nil {
 		return err
