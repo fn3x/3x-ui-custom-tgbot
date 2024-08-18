@@ -1851,7 +1851,7 @@ func (t *Tgbot) sendPaymentLink(chatId int64, tgUserId int64) {
 			t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.messages.confirmationURL", "ConfirmationURL=="+confirmationURL))
 		} else {
 			tx.Rollback()
-			logger.Errorf("Couldn't save payment to db. Rolled back transaction. Reason: %s", err.Error())
+			logger.Errorf("Couldn't save payment to db. Rolled back transaction.\nResponse: %s\nReason: %s", err.Error())
 			t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.messages.errorOperation"))
 		}
 	}()
