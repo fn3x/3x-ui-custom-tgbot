@@ -1734,7 +1734,6 @@ func (t *Tgbot) sendPaymentLink(chatId int64, tgUserId int64) {
 			VatCode:     1,
 		},
 	}
-	payment.SavePaymentMethod = true
 
 	shopId, err := t.settingService.GetYookassaShopId()
 	apiKey, err := t.settingService.GetYookassaApiKey()
