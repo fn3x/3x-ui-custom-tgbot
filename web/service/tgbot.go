@@ -1821,9 +1821,11 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64) {
 	}
 
 	payment := SinglePaymentRequest{}
+	const itemValue = "300.00"
+	const itemCurrency = "RUB"
 
-	payment.Amount.Value = "300.00"
-	payment.Amount.Currency = "RUB"
+	payment.Amount.Value = itemValue
+	payment.Amount.Currency = itemCurrency
 	payment.Capture = true
 	payment.Description = "Access to a website hosted by fn3x"
 	payment.Confirmation.Type = "redirect"
@@ -1831,7 +1833,12 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64) {
 	payment.Receipt.Items = [1]Item{
 		{
 			Description: "Access to a website hosted by fn3x",
-			VatCode:     1,
+			Amount: Amount{
+				Value:    itemValue,
+				Currency: itemCurrency,
+			},
+			VatCode:  1,
+			Quantity: 1,
 		},
 	}
 
