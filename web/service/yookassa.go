@@ -23,6 +23,7 @@ type Item struct {
 	Quantity    uint   `json:"quantity"`
 }
 
+// TODO: make single and auto requests
 type PaymentRequest struct {
 	PaymentMethodId string `json:"payment_method_id"`
 	Amount          Amount `json:"amount"`
