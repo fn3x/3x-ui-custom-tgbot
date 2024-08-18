@@ -1735,7 +1735,7 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64) {
 	payment.Amount.Currency = itemCurrency
 	payment.Capture = true
 	payment.Description = "Access to a website hosted by fn3x"
-	payment.Confirmation.Type = "mobile_application"
+	payment.Confirmation.Type = "redirect"
 	payment.Confirmation.ReturnURL = returnUrl
 	payment.Receipt.Customer.Email = email
 	payment.Receipt.Items = [1]Item{
