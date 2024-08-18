@@ -1753,7 +1753,7 @@ func (t *Tgbot) sendPaymentLink(chatId int64, tgUserId int64) {
 		} else {
 			tx.Rollback()
 			prettyResponse, _ := json.MarshalIndent(response, "", "    ")
-			logger.Errorf("Couldn't save payment to db. Rolled back transaction.\nResponse: %s\nReason: %s", string(prettyResponse), err.Error())
+			logger.Errorf("Couldn't save payment to db. Rolled back transaction.\r\nResponse: %s\r\nReason: %s", string(prettyResponse), err.Error())
 			t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
 		}
 	}()

@@ -55,6 +55,10 @@ type PaymentResponse struct {
 		Id    string `json:"id"`
 		Saved bool   `json:"saved"`
 	} `json:"payment_method"`
+	Type        string `json:"type"`
+	Code        string `json:"code"`
+	Description string `json:"description"`
+	Parameter   string `json:"parameter"`
 }
 
 func createPayment(payment PaymentRequest) (PaymentResponse, error) {
