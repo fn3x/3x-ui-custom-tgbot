@@ -838,7 +838,7 @@ func (t *Tgbot) answerCallback(callbackQuery *telego.CallbackQuery, isAdmin bool
 		case "subscribe":
 			tgUserID := callbackQuery.From.ID
 			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.subscribe"))
-			t.sendPaymentLink(chatId, tgUserID)
+			t.sendSinglePaymentLink(chatId, tgUserID)
 		case "subscriptions":
 			tgUserID := callbackQuery.From.ID
 			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.subscriptions"))
@@ -1713,14 +1713,14 @@ func (t *Tgbot) sendSubscriptions(chatId int64, tgUserId int64) {
 	t.SendMsgToTgbot(chatId, msg, inlineKeyboard)
 }
 
-func (t *Tgbot) sendPaymentLink(chatId int64, tgUserId int64) {
+func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64) {
 	returnUrl, err := t.GetMyLink()
 	if err != nil {
 		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
 		return
 	}
 
-	payment := PaymentRequest{}
+	payment := SinglePaymentRequest{}
 
 	payment.Amount.Value = "300.00"
 	payment.Amount.Currency = "RUB"
@@ -1737,7 +1737,6 @@ func (t *Tgbot) sendPaymentLink(chatId int64, tgUserId int64) {
 
 	shopId, err := t.settingService.GetYookassaShopId()
 	apiKey, err := t.settingService.GetYookassaApiKey()
-
 	if err != nil {
 		logger.Errorf("Couldn't get yookassa credentials. Reason: %s", err.Error())
 		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
@@ -1759,7 +1758,7 @@ func (t *Tgbot) sendPaymentLink(chatId int64, tgUserId int64) {
 			t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.messages.confirmationURL", "ConfirmationURL=="+confirmationURL))
 		} else {
 			tx.Rollback()
-			prettyResponse, _ := json.MarshalIndent(response, "", "    ")
+			prettyResponse, _ := json.MarshalIndent(response, "", "  ")
 			logger.Errorf("Couldn't save payment to db. Rolled back transaction.\r\nResponse: %s\r\nReason: %s", string(prettyResponse), err.Error())
 			t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
 		}

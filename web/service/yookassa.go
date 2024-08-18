@@ -23,20 +23,32 @@ type Item struct {
 	Quantity    uint   `json:"quantity"`
 }
 
-// TODO: make single and auto requests
-type PaymentRequest struct {
-	PaymentMethodId string `json:"payment_method_id"`
-	Amount          Amount `json:"amount"`
-	Confirmation    struct {
+type SinglePaymentRequest struct {
+	Amount       Amount `json:"amount"`
+	Confirmation struct {
 		Type      string `json:"type"`
 		ReturnURL string `json:"return_url"`
 	} `json:"confirmation"`
 	Receipt struct {
 		Items [1]Item `json:"items"`
 	} `json:"receipt"`
-	Capture           bool   `json:"capture"`
-	Description       string `json:"description"`
-	SavePaymentMethod bool   `json:"save_payment_method"`
+	Capture     bool   `json:"capture"`
+	Description string `json:"description"`
+}
+
+type SavePaymentRequest struct {
+	SinglePaymentRequest
+	PaymentMethodData struct {
+		Type string `json:"type"`
+	} `json:"payment_method_data"`
+	SavePaymentMethod bool `json:"save_payment_method"`
+}
+
+type AutoPaymentRequest struct {
+	Amount          Amount `json:"amount"`
+	Capture         bool   `json:"capture"`
+	Description     string `json:"description"`
+	PaymentMethodId string `json:"payment_method_id"`
 }
 
 type PaymentResponse struct {
@@ -57,7 +69,7 @@ type PaymentResponse struct {
 	Parameter   string `json:"parameter"`
 }
 
-func createPayment(payment PaymentRequest, shopId int, apiKey string) (PaymentResponse, error) {
+func createPayment(payment any, shopId int, apiKey string) (PaymentResponse, error) {
 	data, _ := json.Marshal(payment)
 	req, _ := http.NewRequest("POST", "https://api.yookassa.ru/v3/payments", bytes.NewBuffer(data))
 	req.Header.Set("Content-Type", "application/json")
