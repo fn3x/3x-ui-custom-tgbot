@@ -65,6 +65,7 @@ type PaymentResponse struct {
 	PaymentMethod struct {
 		Id    string `json:"id"`
 		Saved bool   `json:"saved"`
+		Type  string `json:"type"`
 	} `json:"payment_method"`
 	Type        string `json:"type"`
 	Code        string `json:"code"`
