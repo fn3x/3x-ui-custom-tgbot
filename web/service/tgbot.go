@@ -1784,7 +1784,9 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64) {
 
 	dbPayment.Status = response.Status
 	dbPayment.PaymentId = response.PaymentMethod.Id
-	value, err := strconv.ParseInt(response.Amount.Value, 10, 64)
+	dbPayment.PaymentMethodType = response.PaymentMethod.Type
+	dbPayment.Saved = response.PaymentMethod.Saved
+	value, err := strconv.ParseFloat(response.Amount.Value, 64)
 	if err != nil {
 		logger.Errorf("Couldn't parse response amount. Response amount value: %s. Reason: %s", response.Amount.Value, err.Error())
 		return

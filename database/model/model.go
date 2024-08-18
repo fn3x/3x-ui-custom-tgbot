@@ -113,9 +113,11 @@ const (
 
 type Payment struct {
 	gorm.Model
-	PaymentId string        `json:"paymentId"`
+	PaymentId         string `json:"paymentId"`
+	PaymentMethodType string `json:"payment_method_type"`
+	Saved             bool   `json:"saved"`
 	// Client    *Client       `json:"client" gorm:"foreignKey:ClientID;references:ID"`
-	Currency  string        `json:"currency"`
-	Amount    int64         `json:"amount"`
-	Status    PaymentStatus `json:"status"`
+	Currency string        `json:"currency"`
+	Amount   float64       `json:"amount"`
+	Status   PaymentStatus `json:"status"`
 }
