@@ -563,6 +563,7 @@
 "refreshedOn" = "\r\n📋🔄 تازه‌سازی شده در: {{ .Time }}\r\n\r\n"
 "yes" = "✅ بله"
 "no" = "❌ خیر"
+"confirmationURL" = "Your payment link: {{ .ConfirmationURL }}"
 
 [tgbot.buttons]
 "closeKeyboard" = "❌ بستن کیبورد"

@@ -5,6 +5,8 @@ import (
 
 	"x-ui/util/json_util"
 	"x-ui/xray"
+
+	"gorm.io/gorm"
 )
 
 type Protocol string
@@ -87,16 +89,35 @@ type Setting struct {
 }
 
 type Client struct {
-	ID         string `json:"id"`
-	Security   string `json:"security"`
-	Password   string `json:"password"`
-	Flow       string `json:"flow"`
-	Email      string `json:"email"`
-	LimitIP    int    `json:"limitIp"`
-	TotalGB    int64  `json:"totalGB" form:"totalGB"`
-	ExpiryTime int64  `json:"expiryTime" form:"expiryTime"`
-	Enable     bool   `json:"enable" form:"enable"`
-	TgID       int64  `json:"tgId" form:"tgId"`
-	SubID      string `json:"subId" form:"subId"`
-	Reset      int    `json:"reset" form:"reset"`
+	ID          string `json:"id"`
+	Security    string `json:"security"`
+	Password    string `json:"password"`
+	Flow        string `json:"flow"`
+	Email       string `json:"email"`
+	LimitIP     int    `json:"limitIp"`
+	TotalGB     int64  `json:"totalGB" form:"totalGB"`
+	ExpiryTime  int64  `json:"expiryTime" form:"expiryTime"`
+	Enable      bool   `json:"enable" form:"enable"`
+	TgID        int64  `json:"tgId" form:"tgId"`
+	SubID       string `json:"subId" form:"subId"`
+	Reset       int    `json:"reset" form:"reset"`
+	AutoPayment bool   `json:"autoPayment"`
+}
+
+type PaymentStatus string
+
+const (
+	Pending           PaymentStatus = "pending"
+	WaitingForCapture PaymentStatus = "waiting_for_capture"
+	Succeeded         PaymentStatus = "succeeded"
+	Canceled          PaymentStatus = "canceled"
+)
+
+type Payment struct {
+	gorm.Model
+	PaymentId string        `json:"paymentId"`
+	Client    *Client        `json:"client"`
+	Currency  string        `json:"currency"`
+	Amount    int64         `json:"amount"`
+	Status    PaymentStatus `json:"status"`
 }

@@ -563,6 +563,7 @@
 "refreshedOn" = "\r\n📋🔄 Refreshed On: {{ .Time }}\r\n\r\n"
 "yes" = "✅ Yes"
 "no" = "❌ No"
+"confirmationURL" = "Your payment link: {{ .ConfirmationURL }}"
 
 [tgbot.buttons]
 "closeKeyboard" = "❌ Close Keyboard"
