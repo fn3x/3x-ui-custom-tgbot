@@ -1757,6 +1757,8 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64) {
 		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
 		return
 	}
+	prettyRequest, _ := json.MarshalIndent(payment, "", "  ")
+	logger.Debugf("Request:%s\r\n", prettyRequest)
 
 	response, err := createPayment(payment, shopId, apiKey)
 	if err != nil {
