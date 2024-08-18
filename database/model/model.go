@@ -114,7 +114,7 @@ const (
 type Payment struct {
 	gorm.Model
 	PaymentId string        `json:"paymentId"`
-	Client    *Client        `json:"client"`
+	// Client    *Client       `json:"client" gorm:"foreignKey:ClientID;references:ID"`
 	Currency  string        `json:"currency"`
 	Amount    int64         `json:"amount"`
 	Status    PaymentStatus `json:"status"`
