@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"x-ui/database/model"
 
@@ -60,7 +61,7 @@ func createPayment(payment PaymentRequest, shopId int, apiKey string) (PaymentRe
 	req, _ := http.NewRequest("POST", "https://api.yookassa.ru/v3/payments", bytes.NewBuffer(data))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Idempotence-Key", uuid.V4())
-	req.SetBasicAuth(string(shopId), apiKey)
+	req.SetBasicAuth(strconv.Itoa(shopId), apiKey)
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
