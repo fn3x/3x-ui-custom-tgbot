@@ -1837,7 +1837,7 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64) {
 	payment.Description = "Access to a website hosted by fn3x"
 	payment.Confirmation.Type = "redirect"
 	payment.Confirmation.ReturnURL = returnUrl
-	payment.Customer.Email = email
+	payment.Receipt.Customer.Email = email
 	payment.Receipt.Items = [1]Item{
 		{
 			Description: "Access to a website hosted by fn3x",
