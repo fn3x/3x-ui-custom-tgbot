@@ -321,6 +321,22 @@ func (s *SettingService) SetKeyFile(webKeyFile string) error {
 	return s.setString("webKeyFile", webKeyFile)
 }
 
+func (s *SettingService) SetYookassaShopId(shopId int) error {
+	return s.setString("shopId", strconv.Itoa(shopId))
+}
+
+func (s *SettingService) SetYookassaApiKey(apiKey string) error {
+	return s.setString("apiKey", apiKey)
+}
+
+func (s *SettingService) GetYookassaShopId() (int, error) {
+	return s.getInt("shopId")
+}
+
+func (s *SettingService) GetYookassaApiKey() (string, error) {
+	return s.getString("apiKey")
+}
+
 func (s *SettingService) GetKeyFile() (string, error) {
 	return s.getString("webKeyFile")
 }
@@ -531,6 +547,8 @@ func (s *SettingService) GetDefaultSettings(host string) (interface{}, error) {
 		"remarkModel":   func() (interface{}, error) { return s.GetRemarkModel() },
 		"datepicker":    func() (interface{}, error) { return s.GetDatepicker() },
 		"ipLimitEnable": func() (interface{}, error) { return s.GetIpLimitEnable() },
+		"shopId":        func() (interface{}, error) { return s.GetYookassaShopId() },
+		"apiKey":        func() (interface{}, error) { return s.GetYookassaApiKey() },
 	}
 
 	result := make(map[string]interface{})

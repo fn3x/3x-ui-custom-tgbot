@@ -300,6 +300,27 @@ check_config() {
     LOGI "${info}"
 }
 
+set_yookassa() {
+    echo && echo -n -e "Enter shop id: " && read shop_id
+    if [[ -z "${shop_id}" ]]; then
+        LOGD "Cancelled"
+        before_show_menu
+    else
+        /usr/local/x-ui/x-ui setting -shopId ${shop_id}
+        echo -e "The shopId is set"
+    fi
+
+    echo && echo -n -e "Enter API key: " && read api_key
+    if [[ -z "${shop_id}" ]]; then
+        LOGD "Cancelled"
+        before_show_menu
+    else
+        /usr/local/x-ui/x-ui setting -apiKey ${api_key}
+        echo -e "The API key is set"
+        confirm_restart
+    fi
+}
+
 set_port() {
     echo && echo -n -e "Enter port number[1-65535]: " && read port
     if [[ -z "${port}" ]]; then
@@ -1336,26 +1357,27 @@ show_menu() {
   ${green}7.${plain} Reset Web Base Path
   ${green}8.${plain} Reset Settings
   ${green}9.${plain} Change Port
-  ${green}10.${plain} View Current Settings
+  ${green}10.${plain} Reset yookassa shop id and api key
+  ${green}11.${plain} View Current Settings
 ————————————————
-  ${green}11.${plain} Start
-  ${green}12.${plain} Stop
-  ${green}13.${plain} Restart
-  ${green}14.${plain} Check Status
-  ${green}15.${plain} Check Logs
+  ${green}12.${plain} Start
+  ${green}13.${plain} Stop
+  ${green}14.${plain} Restart
+  ${green}15.${plain} Check Status
+  ${green}16.${plain} Check Logs
 ————————————————
-  ${green}16.${plain} Enable Autostart
-  ${green}17.${plain} Disable Autostart
+  ${green}17.${plain} Enable Autostart
+  ${green}18.${plain} Disable Autostart
 ————————————————
-  ${green}18.${plain} SSL Certificate Management
-  ${green}19.${plain} Cloudflare SSL Certificate
-  ${green}20.${plain} IP Limit Management
-  ${green}21.${plain} WARP Management
-  ${green}22.${plain} Firewall Management
+  ${green}19.${plain} SSL Certificate Management
+  ${green}20.${plain} Cloudflare SSL Certificate
+  ${green}21.${plain} IP Limit Management
+  ${green}22.${plain} WARP Management
+  ${green}23.${plain} Firewall Management
 ————————————————
-  ${green}23.${plain} Enable BBR 
-  ${green}24.${plain} Update Geo Files
-  ${green}25.${plain} Speedtest by Ookla
+  ${green}24.${plain} Enable BBR 
+  ${green}25.${plain} Update Geo Files
+  ${green}26.${plain} Speedtest by Ookla
 "
     show_status
     echo && read -p "Please enter your selection [0-25]: " num
@@ -1392,51 +1414,54 @@ show_menu() {
         check_install && set_port
         ;;
     10)
-        check_install && check_config
+        check_install && set_yookassa
         ;;
     11)
-        check_install && start
+        check_install && check_config
         ;;
     12)
-        check_install && stop
+        check_install && start
         ;;
     13)
-        check_install && restart
+        check_install && stop
         ;;
     14)
-        check_install && status
+        check_install && restart
         ;;
     15)
-        check_install && show_log
+        check_install && status
         ;;
     16)
-        check_install && enable
+        check_install && show_log
         ;;
     17)
-        check_install && disable
+        check_install && enable
         ;;
     18)
-        ssl_cert_issue_main
+        check_install && disable
         ;;
     19)
-        ssl_cert_issue_CF
+        ssl_cert_issue_main
         ;;
     20)
-        iplimit_main
+        ssl_cert_issue_CF
         ;;
     21)
-        warp_cloudflare
+        iplimit_main
         ;;
     22)
-        firewall_menu
+        warp_cloudflare
         ;;
     23)
-        bbr_menu
+        firewall_menu
         ;;
     24)
-        update_geo
+        bbr_menu
         ;;
     25)
+        update_geo
+        ;;
+    26)
         run_speedtest
         ;;
     *)

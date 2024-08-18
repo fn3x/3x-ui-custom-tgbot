@@ -1736,7 +1736,15 @@ func (t *Tgbot) sendPaymentLink(chatId int64, tgUserId int64) {
 	}
 	payment.SavePaymentMethod = true
 
-	response, err := createPayment(payment)
+	shopId, err := t.settingService.GetYookassaShopId()
+	apiKey, err := t.settingService.GetYookassaApiKey()
+
+	if err != nil {
+		logger.Errorf("Couldn't get yookassa credentials. Reason: %s", err.Error())
+		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
+	}
+
+	response, err := createPayment(payment, shopId, apiKey)
 	if err != nil {
 		logger.Errorf("Couldn't create payment. Reason: %s", err.Error())
 		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
