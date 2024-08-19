@@ -345,6 +345,18 @@ set_port() {
     fi
 }
 
+set_webhook_port() {
+    echo && echo -n -e "Enter port number[1-65535]: " && read webhook_port
+    if [[ -z "${webhook_port}" ]]; then
+        LOGD "Cancelled"
+        before_show_menu
+    else
+        /usr/local/x-ui/x-ui setting -webhookPort ${webhook_port}
+        echo -e "The webhook port is set ${green}${webhook_port}${plain}"
+        confirm_restart
+    fi
+}
+
 start() {
     check_status
     if [[ $? == 0 ]]; then
@@ -1432,51 +1444,54 @@ show_menu() {
         check_install && set_email
         ;;
     12)
-        check_install && check_config
+        check_install && set_email
         ;;
     13)
-        check_install && start
+        check_install && set_webhook_port
         ;;
     14)
-        check_install && stop
+        check_install && start
         ;;
     15)
-        check_install && restart
+        check_install && stop
         ;;
     16)
-        check_install && status
+        check_install && restart
         ;;
     17)
-        check_install && show_log
+        check_install && status
         ;;
     18)
-        check_install && enable
+        check_install && show_log
         ;;
     19)
-        check_install && disable
+        check_install && enable
         ;;
     20)
-        ssl_cert_issue_main
+        check_install && disable
         ;;
     21)
-        ssl_cert_issue_CF
+        ssl_cert_issue_main
         ;;
     22)
-        iplimit_main
+        ssl_cert_issue_CF
         ;;
     23)
-        warp_cloudflare
+        iplimit_main
         ;;
     24)
-        firewall_menu
+        warp_cloudflare
         ;;
     25)
-        bbr_menu
+        firewall_menu
         ;;
     26)
-        update_geo
+        bbr_menu
         ;;
     27)
+        update_geo
+        ;;
+    28)
         run_speedtest
         ;;
     *)

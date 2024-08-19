@@ -309,6 +309,14 @@ func (s *SettingService) SetPort(port int) error {
 	return s.setInt("webPort", port)
 }
 
+func (s *SettingService) GetWebhookPort() (int, error) {
+	return s.getInt("webhookPort")
+}
+
+func (s *SettingService) SetWebhookPort(port int) error {
+	return s.setInt("webhookPort", port)
+}
+
 func (s *SettingService) SetCertFile(webCertFile string) error {
 	return s.setString("webCertFile", webCertFile)
 }

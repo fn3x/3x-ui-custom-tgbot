@@ -145,6 +145,7 @@ config_after_install() {
         echo -e "${yellow}Your API key is: ${api_key}${plain}"
         read -p "Please set up email for receipts: " email
         echo -e "${yellow}Your email for receipts is: ${email}${plain}"
+        echo -e "${yellow}Port for yookassa webhooks: ${webhook_port}${plain}"
         read -p "Please set up the web base path (ip:port/webbasepath/): " config_webBasePath
         echo -e "${yellow}Your web base path is: ${config_webBasePath}${plain}"
         echo -e "${yellow}Initializing, please wait...${plain}"
@@ -157,6 +158,8 @@ config_after_install() {
         /usr/local/x-ui/x-ui setting -shopId ${shop_id}
         /usr/local/x-ui/x-ui setting -apiKey ${api_key}
         echo -e "${yellow}Yookassa auth set successfully!${plain}"
+        /usr/local/x-ui/x-ui setting -webhookPort ${webhook_port}
+        echo -e "${yellow}Yookassa webhook port set successfully!${plain}"
         /usr/local/x-ui/x-ui setting -email ${email}
         echo -e "${yellow}Email for receipts set successfully!${plain}"
     else
