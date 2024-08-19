@@ -1906,6 +1906,7 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64) {
 
 	dbPayment.Amount = value
 	dbPayment.Currency = response.Amount.Currency
+	dbPayment.IdempotenceKey = idempotenceKey
 
 	tx.Create(&dbPayment)
 	confirmationURL = response.Confirmation.ConfirmationURL
