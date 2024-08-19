@@ -119,7 +119,7 @@ func (webhookService *WebhookService) WebhookHandler(w http.ResponseWriter, r *h
 		return
 	}
 
-	logger.Info("Webhook notification: Type=%s Event=%s Object=%s\r\n", notification.Type, notification.Event, notification.Object)
+	logger.Infof("Webhook notification: Type=%s Event=%s Object=%s\r\n", notification.Type, notification.Event, notification.Object)
 
 	w.WriteHeader(http.StatusOK)
 }
