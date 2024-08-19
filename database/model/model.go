@@ -115,17 +115,15 @@ const (
 
 type Payment struct {
 	gorm.Model
-	IdempotenceKey     string        `json:"idempotenceKey" gorm:"unique"`
-	SucceededWebhookId *string       `json:"succeededWebhookId"`
-	CanceledWebhookId  *string       `json:"canceledWebhookId"`
-	PaymentId          string        `json:"paymentId"`
-	PaymentMethodType  string        `json:"paymentMethodType"`
-	Saved              bool          `json:"saved"`
-	ClientID           int64         `json:"clientId"`
-	Client             Client        `json:"client"`
-	Currency           string        `json:"currency"`
-	Amount             float64       `json:"amount"`
-	Status             PaymentStatus `json:"status"`
+	IdempotenceKey    string        `json:"idempotenceKey" gorm:"unique"`
+	PaymentId         string        `json:"paymentId"`
+	PaymentMethodType string        `json:"paymentMethodType"`
+	Saved             bool          `json:"saved"`
+	ClientID          int64         `json:"clientId"`
+	Client            *Client       `json:"client"`
+	Currency          string        `json:"currency"`
+	Amount            float64       `json:"amount"`
+	Status            PaymentStatus `json:"status"`
 }
 
 type Webhook struct {
