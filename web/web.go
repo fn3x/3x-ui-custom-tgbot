@@ -82,8 +82,12 @@ type Server struct {
 	httpServer *http.Server
 	listener   net.Listener
 
+	webhookHttpServer *http.Server
+	webhookListener   net.Listener
+
 	index  *controller.IndexController
 	server *controller.ServerController
+	webhooks *controller.WebhookServerController
 	panel  *controller.XUIController
 	api    *controller.APIController
 
@@ -236,6 +240,33 @@ func (s *Server) initRouter() (*gin.Engine, error) {
 	return engine, nil
 }
 
+func (s *Server) initWebhookRouter() (*gin.Engine, error) {
+	if config.IsDebug() {
+		gin.SetMode(gin.DebugMode)
+	} else {
+		gin.DefaultWriter = io.Discard
+		gin.DefaultErrorWriter = io.Discard
+		gin.SetMode(gin.ReleaseMode)
+	}
+
+	engine := gin.Default()
+
+	webDomain, err := s.settingService.GetWebDomain()
+	if err != nil {
+		return nil, err
+	}
+
+	if webDomain != "" {
+		engine.Use(middleware.DomainValidatorMiddleware(webDomain))
+	}
+
+	g := engine.Group("/")
+
+	s.webhooks = controller.NewWebhookController(g)
+
+	return engine, nil
+}
+
 func (s *Server) startTask() {
 	err := s.xrayService.RestartXray(true)
 	if err != nil {
@@ -315,6 +346,11 @@ func (s *Server) Start() (err error) {
 		return err
 	}
 
+	webhookEngine, err := s.initWebhookRouter()
+	if err != nil {
+		return err
+	}
+
 	certFile, err := s.settingService.GetCertFile()
 	if err != nil {
 		return err
@@ -331,8 +367,17 @@ func (s *Server) Start() (err error) {
 	if err != nil {
 		return err
 	}
+	webhookPort, err := s.settingService.GetWebhookPort()
+	if err != nil {
+		return err
+	}
 	listenAddr := net.JoinHostPort(listen, strconv.Itoa(port))
 	listener, err := net.Listen("tcp", listenAddr)
+	if err != nil {
+		return err
+	}
+	webhookListenAddr := net.JoinHostPort(listen, strconv.Itoa(webhookPort))
+	webhookListener, err := net.Listen("tcp", webhookListenAddr)
 	if err != nil {
 		return err
 	}
@@ -345,21 +390,34 @@ func (s *Server) Start() (err error) {
 			listener = network.NewAutoHttpsListener(listener)
 			listener = tls.NewListener(listener, c)
 			logger.Info("Web server running HTTPS on", listener.Addr())
+			webhookListener = network.NewAutoHttpsListener(webhookListener)
+			webhookListener = tls.NewListener(listener, c)
+			logger.Info("Webhook server running HTTPS on", webhookListener.Addr())
 		} else {
 			logger.Error("Error loading certificates:", err)
 			logger.Info("Web server running HTTP on", listener.Addr())
+			logger.Info("Webhook server running HTTP on", webhookListener.Addr())
 		}
 	} else {
 		logger.Info("Web server running HTTP on", listener.Addr())
+		logger.Info("Webhook server running HTTP on", webhookListener.Addr())
 	}
 	s.listener = listener
+	s.webhookListener = webhookListener
 
 	s.httpServer = &http.Server{
 		Handler: engine,
 	}
+	s.webhookHttpServer = &http.Server{
+		Handler: webhookEngine,
+	}
 
 	go func() {
 		s.httpServer.Serve(listener)
+	}()
+
+	go func() {
+		s.webhookHttpServer.Serve(webhookListener)
 	}()
 
 	s.startTask()
@@ -384,13 +442,21 @@ func (s *Server) Stop() error {
 	}
 	var err1 error
 	var err2 error
+	var err3 error
+	var err4 error
 	if s.httpServer != nil {
 		err1 = s.httpServer.Shutdown(s.ctx)
 	}
 	if s.listener != nil {
 		err2 = s.listener.Close()
 	}
-	return common.Combine(err1, err2)
+	if s.webhookHttpServer != nil {
+		err3 = s.webhookHttpServer.Shutdown(s.ctx)
+	}
+	if s.webhookListener != nil {
+		err4 = s.webhookListener.Close()
+	}
+	return common.Combine(err1, err2, err3, err4)
 }
 
 func (s *Server) GetCtx() context.Context {

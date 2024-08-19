@@ -21,6 +21,7 @@ import (
 	"x-ui/web/locale"
 	"x-ui/xray"
 
+	"github.com/google/uuid"
 	"github.com/mymmrac/telego"
 	th "github.com/mymmrac/telego/telegohandler"
 	tu "github.com/mymmrac/telego/telegoutil"
@@ -50,6 +51,7 @@ type Tgbot struct {
 	settingService SettingService
 	serverService  ServerService
 	xrayService    XrayService
+	webhookService WebhookService
 	lastStatus     *Status
 }
 
@@ -1821,8 +1823,6 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64) {
 	}
 
 	payment := SinglePaymentRequest{}
-	const itemValue = "300.00"
-	const itemCurrency = "RUB"
 
 	email, err := t.settingService.GetEmail()
 	if err != nil {
@@ -1831,6 +1831,15 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64) {
 		return
 	}
 
+	var isTest bool
+	if env := os.Getenv("X-UI_TEST_ENV"); env != "" {
+		isTest = true
+	}
+
+	const itemValue = "300.00"
+	const itemCurrency = "RUB"
+	idempotenceKey := uuid.NewString()
+	payment.Test = isTest
 	payment.Amount.Value = itemValue
 	payment.Amount.Currency = itemCurrency
 	payment.Capture = true
@@ -1860,7 +1869,7 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64) {
 	prettyRequest, _ := json.MarshalIndent(payment, "", "  ")
 	logger.Infof("Request:%s\r\n", prettyRequest)
 
-	response, err := createPayment(payment, shopId, apiKey)
+	response, err := createPayment(payment, idempotenceKey, shopId, apiKey, isTest)
 	if err != nil {
 		logger.Errorf("Couldn't create payment. Reason: %s", err.Error())
 		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
@@ -1874,14 +1883,15 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64) {
 	confirmationURL := ""
 	tx := database.GetDB().Begin()
 	defer func() {
-		if err == nil {
-			tx.Commit()
-			t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.messages.confirmationURL", "ConfirmationURL=="+confirmationURL))
-		} else {
+		if err != nil {
 			tx.Rollback()
-			logger.Errorf("Couldn't save payment to db. Rolled back transaction.\r\nReason: %s", err.Error())
+			logger.Errorf("Couldn't create payment. Rolled back.\r\nReason: %s", err.Error())
 			t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
+			return
 		}
+
+		tx.Commit()
+		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.messages.confirmationURL", "ConfirmationURL=="+confirmationURL))
 	}()
 
 	dbPayment.Status = response.Status
@@ -1899,6 +1909,28 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64) {
 
 	tx.Create(&dbPayment)
 	confirmationURL = response.Confirmation.ConfirmationURL
+
+	domain, err := t.settingService.GetWebDomain()
+	if err != nil {
+		logger.Errorf("Couldn't get web domain for %s. Reason: %s", idempotenceKey, err.Error())
+		return
+	}
+
+	webhook := Webhook{
+		Event: Succeeded,
+		Url:   "https://" + domain + "/webhooks",
+	}
+	succeededId, err := t.registerWebhook(webhook, idempotenceKey)
+
+	webhook.Event = Canceled
+	canceledId, err := t.registerWebhook(webhook, idempotenceKey)
+
+	dbWebhook := model.Webhook{
+		Payment: dbPayment,
+		SucceededId: succeededId,
+		CanceledId: canceledId,
+	}
+	tx.Create(&dbWebhook)
 }
 
 func (t *Tgbot) sendBackup(chatId int64) {
@@ -2023,4 +2055,14 @@ func (t *Tgbot) editMessageTgBot(chatId int64, messageID int, text string, inlin
 	if _, err := bot.EditMessageText(&params); err != nil {
 		logger.Warning(err)
 	}
+}
+
+func (t *Tgbot) registerWebhook(webhook Webhook, idempotenceKey string) (string, error) {
+	webhookResponse, err := t.webhookService.registerWebhook(webhook, idempotenceKey)
+	if err != nil {
+		logger.Errorf("Couldn't register webhook on %s for %s. Reason: %s", webhook.Event, idempotenceKey, err.Error())
+		return "", err
+	}
+	logger.Infof("Registered webhook(%s) on %s for %s", webhookResponse.Id, webhook.Event, idempotenceKey)
+	return webhookResponse.Id, nil
 }
