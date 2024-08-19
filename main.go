@@ -369,6 +369,24 @@ func updateEmail(email string) {
 	}
 }
 
+func updateWebhookPort(port int) {
+	err := database.InitDB(config.GetDBPath())
+	if err != nil {
+		fmt.Println("Database initialization failed:", err)
+		return
+	}
+
+	settingService := service.SettingService{}
+	if port != 0 {
+		err := settingService.SetWebhookPort(port)
+		if err != nil {
+			fmt.Println("Failed to set webhook port:", err)
+		} else {
+			fmt.Println("Webhook port set successfully")
+		}
+	}
+}
+
 func main() {
 	if len(os.Args) < 2 {
 		runWebServer()
@@ -397,6 +415,7 @@ func main() {
 	var show bool
 	var remove_secret bool
 	var email string
+	var webhookPort int
 	settingCmd.BoolVar(&reset, "reset", false, "Reset all settings")
 	settingCmd.BoolVar(&show, "show", false, "Display current settings")
 	settingCmd.BoolVar(&remove_secret, "remove_secret", false, "Remove secret key")
@@ -413,6 +432,7 @@ func main() {
 	settingCmd.StringVar(&tgbotchatid, "tgbotchatid", "", "Set chat ID for Telegram bot notifications")
 	settingCmd.BoolVar(&enabletgbot, "enabletgbot", false, "Enable notifications via Telegram bot")
 	settingCmd.StringVar(&email, "email", "", "Set email for receipts")
+	settingCmd.IntVar(&webhookPort, "webhookPort", 0, "Set port for yookassa webhooks")
 
 	oldUsage := flag.Usage
 	flag.Usage = func() {
@@ -468,6 +488,9 @@ func main() {
 		}
 		if email != "" {
 			updateEmail(email)
+		}
+		if webhookPort != 0 {
+			updateWebhookPort(webhookPort)
 		}
 	case "cert":
 		err := settingCmd.Parse(os.Args[2:])

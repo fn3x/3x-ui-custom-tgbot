@@ -115,11 +115,21 @@ const (
 
 type Payment struct {
 	gorm.Model
-	PaymentId         string `json:"paymentId"`
-	PaymentMethodType string `json:"payment_method_type"`
-	Saved             bool   `json:"saved"`
-	// Client    *Client       `json:"client" gorm:"foreignKey:ClientID;references:ID"`
-	Currency string        `json:"currency"`
-	Amount   float64       `json:"amount"`
-	Status   PaymentStatus `json:"status"`
+	IdempotenceKey     string        `json:"idempotenceKey" gorm:"unique"`
+	SucceededWebhookId *string       `json:"succeededWebhookId"`
+	CanceledWebhookId  *string       `json:"canceledWebhookId"`
+	PaymentId          string        `json:"paymentId"`
+	PaymentMethodType  string        `json:"paymentMethodType"`
+	Saved              bool          `json:"saved"`
+	Client             *Client       `json:"client" gorm:"foreignKey:ClientID;references:ID"`
+	Currency           string        `json:"currency"`
+	Amount             float64       `json:"amount"`
+	Status             PaymentStatus `json:"status"`
+}
+
+type Webhook struct {
+	gorm.Model
+	Payment     Payment
+	SucceededId string
+	CanceledId  string
 }

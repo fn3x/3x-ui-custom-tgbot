@@ -7,8 +7,6 @@ import (
 	"strconv"
 
 	"x-ui/database/model"
-
-	"github.com/savsgio/gotils/uuid"
 )
 
 type Amount struct {
@@ -37,6 +35,7 @@ type SinglePaymentRequest struct {
 	} `json:"receipt"`
 	Capture     bool   `json:"capture"`
 	Description string `json:"description"`
+	Test        bool   `json:"test"`
 }
 
 type SavePaymentRequest struct {
@@ -73,11 +72,11 @@ type PaymentResponse struct {
 	Parameter   string `json:"parameter"`
 }
 
-func createPayment(payment any, shopId int, apiKey string) (PaymentResponse, error) {
+func createPayment(payment any, idempotenceKey string, shopId int, apiKey string, isDev bool) (PaymentResponse, error) {
 	data, _ := json.Marshal(payment)
 	req, _ := http.NewRequest("POST", "https://api.yookassa.ru/v3/payments", bytes.NewBuffer(data))
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Idempotence-Key", uuid.V4())
+	req.Header.Set("Idempotence-Key", idempotenceKey)
 	req.SetBasicAuth(strconv.Itoa(shopId), apiKey)
 
 	client := &http.Client{}
