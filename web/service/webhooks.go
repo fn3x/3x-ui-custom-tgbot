@@ -125,22 +125,33 @@ func (w *WebhookService) WebhookHandler(wr http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	jsonWebhook, err := json.MarshalIndent(notification, "", "  ")
-	logger.Infof("Webhook notification: %s\r\n", jsonWebhook)
+	jsonWebhook, _ := json.MarshalIndent(notification, "", "  ")
+	logger.Infof("(modified log) Webhook notification:\r\n %s", jsonWebhook)
 
-	err = w.database.
-		Model(&model.Payment{}).
+	var payment model.Payment
+	result := w.database.First(&payment, "payment_id = ?", notification.Object.Id)
+
+	paymentJson, _ := json.MarshalIndent(payment, "", "  ")
+	logger.Infof("Found payment:\r\n %s", paymentJson)
+	logger.Infof("Rows found: %d", result.RowsAffected)
+
+	var updatePayment model.Payment
+
+	result = w.database.
+		Model(&updatePayment).
 		Where("payment_id = ?", notification.Object.Id).
 		Updates(model.Payment{
-			Status: notification.Object.Status,
-			PaymentMethodId: notification.Object.PaymentMethod.Id,
+			Status:            notification.Object.Status,
+			PaymentMethodId:   notification.Object.PaymentMethod.Id,
 			PaymentMethodType: notification.Object.PaymentMethod.Type,
-			Saved: notification.Object.PaymentMethod.Saved,
-		}).Error
-	if err != nil {
-		logger.Errorf("Couldn't update payment on webhook notification. Reason: %s", err.Error())
+			Saved:             notification.Object.PaymentMethod.Saved,
+		})
+	if result.Error != nil {
+		logger.Errorf("Couldn't update payment on webhook notification. Reason: %s", result.Error.Error())
 		return
 	}
+
+	logger.Infof("Rows updated: %d", result.RowsAffected)
 
 	wr.WriteHeader(http.StatusOK)
 }
