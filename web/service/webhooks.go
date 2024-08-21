@@ -9,8 +9,6 @@ import (
 	"x-ui/database"
 	"x-ui/database/model"
 	"x-ui/logger"
-
-	"gorm.io/gorm"
 )
 
 type WebhookEvent = string
@@ -40,14 +38,11 @@ type WebhookNotification struct {
 }
 
 type WebhookService struct {
-	database       *gorm.DB
 	settingService SettingService
 }
 
 func (w *WebhookService) NewWebhookService() *WebhookService {
-	service := new(WebhookService)
-	service.database = database.GetDB()
-	return service
+	return new(WebhookService)
 }
 
 func (w *WebhookService) registerWebhook(webhook Webhook, idempotenceKey string) (WebhookRegistered, error) {
@@ -128,8 +123,9 @@ func (w *WebhookService) WebhookHandler(wr http.ResponseWriter, r *http.Request)
 	jsonWebhook, _ := json.MarshalIndent(notification, "", "  ")
 	logger.Infof("(modified log) Webhook notification:\r\n %s", jsonWebhook)
 
+	db := database.GetDB()
 	var payment model.Payment
-	result := w.database.First(&payment, "payment_id = ?", notification.Object.Id)
+	result := db.First(&payment, "payment_id = ?", notification.Object.Id)
 
 	paymentJson, _ := json.MarshalIndent(payment, "", "  ")
 	logger.Infof("Found payment:\r\n %s", paymentJson)
@@ -137,7 +133,7 @@ func (w *WebhookService) WebhookHandler(wr http.ResponseWriter, r *http.Request)
 
 	var updatePayment model.Payment
 
-	result = w.database.
+	result = db.
 		Model(&updatePayment).
 		Where("payment_id = ?", notification.Object.Id).
 		Updates(model.Payment{
