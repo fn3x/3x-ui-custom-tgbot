@@ -118,17 +118,10 @@ type Payment struct {
 	PaymentMethodType string        `json:"paymentMethodType"`
 	PaymentMethodId   string        `json:"paymentMethodId"`
 	Saved             bool          `json:"saved"`
-	ClientID          int64         `json:"clientId"`
-	Client            *Client       `json:"client"`
+	SubId             string        `json:"subId"`
 	Currency          string        `json:"currency"`
 	Amount            float64       `json:"amount"`
 	Status            PaymentStatus `json:"status"`
-}
-
-type Webhook struct {
-	gorm.Model
-	Payment     Payment
-	PaymentID   int64
-	SucceededId string
-	CanceledId  string
+	SucceededId       string
+	CanceledId        string
 }
