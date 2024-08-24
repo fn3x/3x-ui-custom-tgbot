@@ -1824,7 +1824,7 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64) {
 
 	payment := SinglePaymentRequest{}
 
-	email, err := t.settingService.GetEmail()
+	emailForReceipt, err := t.settingService.GetEmail()
 	if err != nil {
 		logger.Errorf("Couldn't get email for receipts. Reason: %s", err.Error())
 		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
@@ -1846,7 +1846,7 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64) {
 	payment.Description = "Access to a website hosted by fn3x"
 	payment.Confirmation.Type = "redirect"
 	payment.Confirmation.ReturnURL = returnUrl
-	payment.Receipt.Customer.Email = email
+	payment.Receipt.Customer.Email = emailForReceipt
 	payment.Receipt.Items = [1]Item{
 		{
 			Description: "Access to a website hosted by fn3x",
@@ -1909,7 +1909,6 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64) {
 	dbPayment.Currency = response.Amount.Currency
 	dbPayment.IdempotenceKey = idempotenceKey
 
-	tx.Create(&dbPayment)
 	confirmationURL = response.Confirmation.ConfirmationURL
 
 	domain, err := t.settingService.GetWebDomain()
@@ -1927,12 +1926,14 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64) {
 	webhook.Event = Canceled
 	canceledId, err := t.registerWebhook(webhook, idempotenceKey)
 
-	dbWebhook := model.Webhook{
-		Payment: dbPayment,
-		SucceededId: succeededId,
-		CanceledId: canceledId,
-	}
-	tx.Create(&dbWebhook)
+	dbPayment.SucceededId = succeededId
+	dbPayment.CanceledId = canceledId
+
+	// TODO: get or create clients for every inbound
+	// 			 get or create subId and attach to all client inbounds
+	//			 then:
+	//			 dbPayment.SubId = subId
+	tx.Create(&dbPayment)
 }
 
 func (t *Tgbot) sendBackup(chatId int64) {
