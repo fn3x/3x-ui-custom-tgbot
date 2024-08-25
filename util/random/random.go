@@ -2,6 +2,8 @@ package random
 
 import (
 	"math/rand"
+
+	"github.com/google/uuid"
 )
 
 var (
@@ -43,4 +45,18 @@ func Seq(n int) string {
 
 func Num(n int) int {
 	return rand.Intn(n)
+}
+
+func RandomLowerAndNum(n int) string {
+	runes := make([]rune, n)
+	for i := 0; i < n; i++ {
+		runes = append(runes, numLowerSeq[rand.Intn(len(numLowerSeq))])
+	}
+
+	return string(runes)
+}
+
+func RandomUUID() string {
+	res, _ := uuid.NewRandom()
+	return res.String()
 }

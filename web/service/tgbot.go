@@ -16,6 +16,7 @@ import (
 	"x-ui/database/model"
 	"x-ui/logger"
 	"x-ui/util/common"
+	"x-ui/util/random"
 	"x-ui/web/global"
 	"x-ui/web/locale"
 	"x-ui/xray"
@@ -1828,11 +1829,10 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64) {
 
 	dbPayment.SucceededId = succeededId
 	dbPayment.CanceledId = canceledId
+	// TODO: retrieve subId if exists
+	dbPayment.SubId = random.RandomUUID()
+	dbPayment.ChatId = chatId
 
-	// TODO: get or create clients for every inbound
-	// 			 get or create subId and attach to all client inbounds
-	//			 then:
-	//			 dbPayment.SubId = subId
 	tx.Create(&dbPayment)
 }
 
