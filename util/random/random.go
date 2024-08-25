@@ -1,9 +1,9 @@
 package random
 
 import (
-	"math/rand"
-
-	"github.com/google/uuid"
+	"crypto/rand"
+	"fmt"
+	mathRand "math/rand"
 )
 
 var (
@@ -38,25 +38,35 @@ func init() {
 func Seq(n int) string {
 	runes := make([]rune, n)
 	for i := 0; i < n; i++ {
-		runes[i] = allSeq[rand.Intn(len(allSeq))]
+		runes[i] = allSeq[mathRand.Intn(len(allSeq))]
 	}
 	return string(runes)
 }
 
 func Num(n int) int {
-	return rand.Intn(n)
+	return mathRand.Intn(n)
 }
 
 func RandomLowerAndNum(n int) string {
 	runes := make([]rune, n)
 	for i := 0; i < n; i++ {
-		runes = append(runes, numLowerSeq[rand.Intn(len(numLowerSeq))])
+		runes = append(runes, numLowerSeq[mathRand.Intn(len(numLowerSeq))])
 	}
 
 	return string(runes)
 }
 
 func RandomUUID() string {
-	res, _ := uuid.NewRandom()
-	return res.String()
+	uuid := make([]byte, 16)
+	_, _ = rand.Read(uuid)
+
+	uuid[6] = (uuid[6] & 0x0f) | 0x40 // set the version 4
+	uuid[8] = (uuid[8] & 0x3f) | 0x8
+
+	return fmt.Sprintf("%08x-%04x-%04x-%04x-%012x",
+		uuid[0:4],
+		uuid[4:6],
+		uuid[6:8],
+		uuid[8:10],
+		uuid[10:16])
 }
