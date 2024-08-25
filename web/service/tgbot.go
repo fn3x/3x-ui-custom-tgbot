@@ -838,10 +838,6 @@ func (t *Tgbot) answerCallback(callbackQuery *telego.CallbackQuery, isAdmin bool
 		case "commands":
 			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.commands"))
 			t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.commands.helpAdminCommands"))
-		case "subscribe":
-			tgUserID := callbackQuery.From.ID
-			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.subscribe"))
-			t.sendSinglePaymentLink(chatId, tgUserID)
 		case "subscriptions":
 			tgUserID := callbackQuery.From.ID
 			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.subscriptions"))
@@ -849,6 +845,25 @@ func (t *Tgbot) answerCallback(callbackQuery *telego.CallbackQuery, isAdmin bool
 		}
 	} else {
 		switch dataArray[0] {
+		case "subscribe":
+			tgUserID := callbackQuery.From.ID
+			userEmail := dataArray[2]
+
+			emails, err := t.inboundService.getAllEmails()
+			if err != nil {
+				t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.errorOperation"))
+				return
+			}
+
+			for _, email := range emails {
+				if email == userEmail {
+					t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.emailNotAvailable"))
+					return
+				}
+			}
+
+			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.subscribe"))
+			t.sendSinglePaymentLink(chatId, tgUserID, userEmail)
 		case "subscribedWithEmail":
 			userEmail := dataArray[1]
 			if userEmail != "" {
@@ -1716,7 +1731,7 @@ func (t *Tgbot) sendSubscriptions(chatId int64, tgUserId int64) {
 	t.SendMsgToTgbot(chatId, msg, inlineKeyboard)
 }
 
-func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64) {
+func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64, email string) {
 	returnUrl, err := t.GetMyLink()
 	if err != nil {
 		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
@@ -1829,8 +1844,17 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64) {
 
 	dbPayment.SucceededId = succeededId
 	dbPayment.CanceledId = canceledId
-	// TODO: retrieve subId if exists
-	dbPayment.SubId = random.RandomUUID()
+	_, client, err := t.inboundService.GetClientByEmail(email)
+	if err != nil {
+		logger.Errorf("Couldn't get client by email=%s %v", email, err)
+	}
+
+	if client.SubID == "" {
+		dbPayment.SubId = random.RandomLowerAndNum(16)
+	} else {
+		dbPayment.SubId = client.SubID
+	}
+
 	dbPayment.ChatId = chatId
 
 	tx.Create(&dbPayment)
