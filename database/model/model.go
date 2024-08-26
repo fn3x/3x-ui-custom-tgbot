@@ -124,7 +124,9 @@ type Payment struct {
 	Currency          string        `json:"currency"`
 	Amount            float64       `json:"amount"`
 	Status            PaymentStatus `json:"status"`
+	Email             string
 	ChatId            int64
+	TgID							int64
 	SucceededId       string
 	CanceledId        string
 }
