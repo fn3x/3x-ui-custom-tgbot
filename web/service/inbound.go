@@ -16,6 +16,23 @@ import (
 	"gorm.io/gorm"
 )
 
+type InboundClientSetting struct {
+	ID         string `json:"id"`
+	Flow       string `json:"flow"`
+	Email      string `json:"email"`
+	LimitIP    int    `json:"limitIp"`
+	TotalGB    int    `json:"totalGB"`
+	ExpiryTime int64  `json:"expiryTime"`
+	Enable     bool   `json:"enable"`
+	TgID       int64  `json:"tgId"`
+	SubID      string `json:"subId"`
+	Reset      int    `json:"reset"`
+}
+
+type InboundSettings struct {
+	Clients []InboundClientSetting `json:"clients"`
+}
+
 type InboundService struct {
 	xrayApi xray.XrayAPI
 }
@@ -1764,7 +1781,6 @@ func (s *InboundService) GetClientTrafficByID(id string) ([]xray.ClientTraffic, 
 		WHERE
 	  	JSON_EXTRACT(client.value, '$.id') in (?)
 		)`, id).Find(&traffics).Error
-
 	if err != nil {
 		logger.Debug(err)
 		return nil, err
