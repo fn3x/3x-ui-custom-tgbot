@@ -840,6 +840,9 @@ func (t *Tgbot) answerCallback(callbackQuery *telego.CallbackQuery, isAdmin bool
 		case "commands":
 			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.commands"))
 			t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.commands.helpAdminCommands"))
+		case "subInfo":
+			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.subscription"))
+			t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.commands.helpAdminCommands"))
 		case "subscriptions":
 			tgUserID := callbackQuery.From.ID
 			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.subscriptions"))
@@ -1677,7 +1680,7 @@ func (t *Tgbot) onlineClients(chatId int64, messageID ...int) {
 
 func (t *Tgbot) sendSubscriptions(chatId int64, tgUserId int64) {
 	traffics, err := t.inboundService.GetClientTrafficTgBot(tgUserId)
-	msg := ""
+	msg := t.I18nBot("tgbot.answers.subscriptions") + "\r\n"
 	if err != nil {
 		logger.Warning(err)
 		msg += t.I18nBot("tgbot.wentWrong")
@@ -1687,7 +1690,7 @@ func (t *Tgbot) sendSubscriptions(chatId int64, tgUserId int64) {
 
 	var buttons []telego.InlineKeyboardButton
 
-	buttons = append(buttons, tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.subscribe")).WithCallbackData(t.encodeQuery("subscribe")))
+	buttons = append(buttons, tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.subscribe")).WithCallbackData(t.encodeQuery("enterEmail")))
 	if len(traffics) == 0 {
 		msg += t.I18nBot("tgbot.firstSub")
 		inlineKeyboard := tu.InlineKeyboard(tu.InlineKeyboardRow(buttons...))
@@ -1703,14 +1706,12 @@ func (t *Tgbot) sendSubscriptions(chatId int64, tgUserId int64) {
 		}
 
 		now := time.Now().Unix()
-		if traffic.ExpiryTime/1000-now < 0 {
-			_, inbound, err := t.inboundService.GetClientInboundByTrafficID(traffic.Id)
-			if err != nil {
-				logger.Warning(err)
-				continue
-			}
-
-			buttons = append(buttons, tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.resubscribe", "Remark=="+inbound.Remark)).WithCallbackData(t.encodeQuery("resubscribe "+strconv.Itoa(traffic.Id))))
+		remainingSeconds := traffic.ExpiryTime/1000 - now
+		if remainingSeconds < 0 {
+			// expired
+			buttons = append(buttons, tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.subInfo", "Email=="+traffic.Email, "Remaining=="+"🔴")).WithCallbackData(t.encodeQuery("subInfo "+traffic.Email)))
+		} else {
+			buttons = append(buttons, tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.subInfo", "Email=="+traffic.Email, "Remaining=="+"🟢")).WithCallbackData(t.encodeQuery("subInfo "+traffic.Email)))
 		}
 	}
 
@@ -2077,4 +2078,23 @@ func (t *Tgbot) handlePaidSub(subId, email string, chatId int64, tgId int64) {
 			t.xrayService.SetToNeedRestart()
 		}
 	}
+}
+
+func (t *Tgbot) sendSubscription(chatId int64, email string) {
+	_, client, err := t.inboundService.GetClientByEmail(email)
+	if err != nil {
+		logger.Errorf("Error getting client inbound by email=%s %v", email, err.Error())
+		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
+		return
+	}
+
+	buttons := make([]telego.InlineKeyboardButton, 2)
+
+	if client.ExpiryTime < 0 {
+		buttons = append(buttons, tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.resubscribe")).WithCallbackData(t.encodeQuery("email "+email)))
+	}
+
+	buttons = append(buttons, tu.InlineKeyboardButton("<<<").WithCallbackData(t.encodeQuery("subscriptions")))
+
+	t.SendMsgToTgbot(chatId, "", tu.InlineKeyboard(buttons))
 }
