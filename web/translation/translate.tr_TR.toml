@@ -601,6 +601,7 @@
 "subscriptions" = "View your subscriptions"
 "subscribe" = "Subscribe"
 "resubscribe" = "Resubscribe ({{ .Remark }})"
+"subInfo" = "{{ .Email }} ({{ .Remaining }})"
 
 [tgbot.answers]
 "successfulOperation" = "✅ İşlem başarılı!"
