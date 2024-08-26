@@ -1,7 +1,6 @@
 package service
 
 import (
-	"bytes"
 	"encoding/json"
 	"net/http"
 	"strconv"
@@ -39,46 +38,11 @@ type WebhookNotification struct {
 
 type WebhookService struct {
 	settingService SettingService
+	tgBot          *Tgbot
 }
 
 func (w *WebhookService) NewWebhookService() *WebhookService {
 	return new(WebhookService)
-}
-
-func (w *WebhookService) registerWebhook(webhook Webhook, idempotenceKey string) (WebhookRegistered, error) {
-	data, _ := json.Marshal(webhook)
-	req, _ := http.NewRequest("POST", "https://api.yookassa.ru/v3/webhook", bytes.NewBuffer(data))
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Idempotence-Key", idempotenceKey)
-
-	shopId, err := w.settingService.GetYookassaShopId()
-	if err != nil {
-		logger.Errorf("Couldn't get shop id from settings. Reason: %s", err.Error())
-		return WebhookRegistered{}, err
-	}
-
-	apiKey, err := w.settingService.GetYookassaApiKey()
-	if err != nil {
-		logger.Errorf("Couldn't get api key from settings. Reason: %s", err.Error())
-		return WebhookRegistered{}, err
-	}
-
-	req.SetBasicAuth(strconv.Itoa(shopId), apiKey)
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return WebhookRegistered{}, err
-	}
-	defer resp.Body.Close()
-
-	var webhookResponse WebhookRegistered
-	if err := json.NewDecoder(resp.Body).Decode(&webhookResponse); err != nil {
-		logger.Errorf("Couldn't decode response body. Reason: %s", err.Error())
-		return WebhookRegistered{}, err
-	}
-
-	return webhookResponse, nil
 }
 
 func (w *WebhookService) removeWebhook(webhookId string) {
@@ -154,4 +118,7 @@ func (w *WebhookService) WebhookHandler(wr http.ResponseWriter, r *http.Request)
 	}
 
 	wr.WriteHeader(http.StatusOK)
+	if notification.Object.Status == model.Succeeded {
+		w.tgBot.handlePaidSub(payment.SubId, payment.Email, payment.ChatId, payment.TgID)
+	}
 }

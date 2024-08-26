@@ -1,11 +1,13 @@
 package service
 
 import (
+	"bytes"
 	"embed"
 	"errors"
 	"encoding/json"
 	"fmt"
 	"net"
+	"net/http"
 	"net/url"
 	"os"
 	"strconv"
@@ -1933,29 +1935,33 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64, email string
 		return
 	}
 
+	_, client, err := t.inboundService.GetClientByEmail(email)
+	if err != nil {
+		logger.Errorf("Couldn't get client by email=%s %v", email, err)
+		return
+	}
+
 	webhook := Webhook{
 		Event: Succeeded,
 		Url:   "https://" + domain + "/webhooks",
 	}
-	succeededId, err := t.registerWebhook(webhook, idempotenceKey)
+	succeedWebhook, err := t.registerWebhook(webhook, shopId, apiKey, idempotenceKey)
 
 	webhook.Event = Canceled
-	canceledId, err := t.registerWebhook(webhook, idempotenceKey)
+	canceledWebhook, err := t.registerWebhook(webhook, shopId, apiKey, idempotenceKey)
 
-	dbPayment.SucceededId = succeededId
-	dbPayment.CanceledId = canceledId
-	_, client, err := t.inboundService.GetClientByEmail(email)
-	if err != nil {
-		logger.Errorf("Couldn't get client by email=%s %v", email, err)
-	}
+	dbPayment.SucceededId = succeedWebhook.Id
+	dbPayment.CanceledId = canceledWebhook.Id
 
-	if client.SubID == "" {
+	if client == nil || client.SubID == "" {
 		dbPayment.SubId = random.RandomLowerAndNum(16)
 	} else {
 		dbPayment.SubId = client.SubID
 	}
 
+	dbPayment.Email = email
 	dbPayment.ChatId = chatId
+	dbPayment.TgID = tgUserId
 
 	tx.Create(&dbPayment)
 }
@@ -2084,12 +2090,91 @@ func (t *Tgbot) editMessageTgBot(chatId int64, messageID int, text string, inlin
 	}
 }
 
-func (t *Tgbot) registerWebhook(webhook Webhook, idempotenceKey string) (string, error) {
-	webhookResponse, err := t.webhookService.registerWebhook(webhook, idempotenceKey)
+func (t *Tgbot) registerWebhook(webhook Webhook, shopId int, apiKey, idempotenceKey string) (WebhookRegistered, error) {
+	data, _ := json.Marshal(webhook)
+	req, _ := http.NewRequest("POST", "https://api.yookassa.ru/v3/webhook", bytes.NewBuffer(data))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Idempotence-Key", idempotenceKey)
+
+	req.SetBasicAuth(strconv.Itoa(shopId), apiKey)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
 	if err != nil {
-		logger.Errorf("Couldn't register webhook on %s for %s. Reason: %s", webhook.Event, idempotenceKey, err.Error())
-		return "", err
+		return WebhookRegistered{}, err
 	}
-	logger.Infof("Registered webhook(%s) on %s for %s", webhookResponse.Id, webhook.Event, idempotenceKey)
-	return webhookResponse.Id, nil
+	defer resp.Body.Close()
+
+	var webhookResponse WebhookRegistered
+	if err := json.NewDecoder(resp.Body).Decode(&webhookResponse); err != nil {
+		logger.Errorf("Couldn't decode response body. Reason: %s", err.Error())
+		return WebhookRegistered{}, err
+	}
+
+	return webhookResponse, nil
+}
+
+func (t *Tgbot) handlePaidSub(subId, email string, chatId int64, tgId int64) {
+	_, client, err := t.inboundService.GetClientByEmail(email)
+	if err != nil {
+		logger.Errorf("Error getting client inbound by email=%s %v", email, err.Error())
+		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
+		return
+	}
+
+	tx := database.GetDB().Begin()
+	defer func() {
+		if err != nil {
+			tx.Rollback()
+		} else {
+			tx.Commit()
+		}
+	}()
+
+	expiryTime := time.Now().AddDate(0, 1, 0)
+
+	if client != nil {
+		client.ExpiryTime = expiryTime.Unix()
+		err := t.inboundService.UpdateClientStat(tx, email, client)
+		if err != nil {
+			logger.Errorf("Error updating client inbound with email=%s %v", email, err.Error())
+			t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
+			return
+		}
+	} else {
+		allInbounds, err := t.inboundService.GetAllInbounds()
+		inbound := allInbounds[0]
+		var defaultSetting []InboundSettings
+		err = json.Unmarshal([]byte(inbound.Settings), &defaultSetting)
+
+		clientSettings := InboundClientSetting{
+			ID:         random.RandomUUID(),
+			Flow:       defaultSetting[0].Clients[0].Flow,
+			Email:      email,
+			ExpiryTime: expiryTime.Unix(),
+			Enable:     true,
+			TgID:       tgId,
+			SubID:      subId,
+		}
+
+		inboundSettings := InboundSettings{
+			Clients: []InboundClientSetting{clientSettings},
+		}
+
+		settingJson, _ := json.Marshal(inboundSettings)
+		newInboundSettings := model.Inbound{
+			Id:       inbound.Id,
+			Settings: string(settingJson),
+		}
+
+		needRestart, err := t.inboundService.AddInboundClient(&newInboundSettings)
+		if err != nil {
+			logger.Errorf("Error adding client inbound with email=%s %v", email, err.Error())
+			t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
+			return
+		}
+		if needRestart {
+			t.xrayService.SetToNeedRestart()
+		}
+	}
 }
