@@ -870,7 +870,7 @@ func (t *Tgbot) answerCallback(callbackQuery *telego.CallbackQuery, isAdmin bool
 			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.subscribe"))
 			t.sendSinglePaymentLink(chatId, tgUserID, userEmail)
 		case "subscribedWithEmail":
-			userEmail := dataArray[1]
+			userEmail := dataArray[2]
 			if userEmail != "" {
 				t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.emptyEmail"))
 				return
@@ -1751,7 +1751,7 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64, email string
 	}
 
 	var isTest bool
-	if env := os.Getenv("X-UI_TEST_ENV"); env != "" {
+	if env := os.Getenv("X_UI_TEST_ENV"); env != "" {
 		isTest = true
 	}
 
@@ -2015,10 +2015,10 @@ func (t *Tgbot) registerWebhook(webhook Webhook, shopId int, apiKey, idempotence
 	return webhookResponse, nil
 }
 
-func (t *Tgbot) handlePaidSub(subId, email string, chatId int64, tgId int64) {
+func (t *Tgbot) handlePaidSub(subId, email string, chatId, tgId int64) {
 	_, client, err := t.inboundService.GetClientByEmail(email)
 	if err != nil {
-		logger.Errorf("Error getting client inbound by email=%s %v", email, err.Error())
+		logger.Errorf("Error getting client inbound by email=%s %s", email, err.Error())
 		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
 		return
 	}
@@ -2077,6 +2077,16 @@ func (t *Tgbot) handlePaidSub(subId, email string, chatId int64, tgId int64) {
 		if needRestart {
 			t.xrayService.SetToNeedRestart()
 		}
+	}
+	result := tx.Model(model.Payment{}).
+		Where("sub_id = ? AND email = ? AND tg_id = ?", subId, email, tgId).
+		Update("applied", true)
+
+	err = result.Error
+	affectedRows := result.RowsAffected
+
+	if err != nil || affectedRows == 0 {
+		logger.Errorf("Did not enable sub after payment. subId=%s email=%s tgId=%d %s", subId, email, tgId, err)
 	}
 }
 
