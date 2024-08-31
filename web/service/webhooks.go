@@ -101,7 +101,7 @@ func (w *WebhookService) WebhookHandler(wr http.ResponseWriter, r *http.Request)
 	}()
 
 	var payment model.Payment
-	result := tx.Select(&payment, "payment_id = ?", notification.Object.Id)
+	result := tx.Where("payment_id = ?", notification.Object.Id).First(&payment)
 
 	if err = result.Error; err != nil {
 		return
