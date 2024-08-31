@@ -1214,6 +1214,29 @@ func (s *InboundService) GetClientInboundByEmail(email string) (traffic *xray.Cl
 	return nil, nil, nil
 }
 
+func (s *InboundService) GetClientByEmailIfExists(clientEmail string) (*xray.ClientTraffic, *model.Client, error) {
+	traffic, inbound, err := s.GetClientInboundByEmail(clientEmail)
+	if err != nil {
+		return nil, nil, err
+	}
+	if inbound == nil {
+		return nil, nil, nil
+	}
+
+	clients, err := s.GetClients(inbound)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	for _, client := range clients {
+		if client.Email == clientEmail {
+			return traffic, &client, nil
+		}
+	}
+
+	return nil, nil, nil
+}
+
 func (s *InboundService) GetClientByEmail(clientEmail string) (*xray.ClientTraffic, *model.Client, error) {
 	traffic, inbound, err := s.GetClientInboundByEmail(clientEmail)
 	if err != nil {
