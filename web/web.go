@@ -391,7 +391,7 @@ func (s *Server) Start() (err error) {
 			listener = tls.NewListener(listener, c)
 			logger.Info("Web server running HTTPS on", listener.Addr())
 			webhookListener = network.NewAutoHttpsListener(webhookListener)
-			webhookListener = tls.NewListener(listener, c)
+			webhookListener = tls.NewListener(webhookListener, c)
 			logger.Info("Webhook server running HTTPS on", webhookListener.Addr())
 		} else {
 			logger.Error("Error loading certificates:", err)
