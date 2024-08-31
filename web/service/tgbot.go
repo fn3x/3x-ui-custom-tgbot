@@ -2017,9 +2017,17 @@ func (t *Tgbot) handleSucceededPayment(tx *gorm.DB, payment *model.Payment) (app
 	} else {
 		logger.Info("client is nil: ok")
 		allInbounds, err := t.inboundService.GetAllInbounds()
+		if err != nil {
+			return false, err
+		}
+
 		inbound := allInbounds[0]
 		var defaultSetting []InboundSettings
 		err = json.Unmarshal([]byte(inbound.Settings), &defaultSetting)
+
+		if err != nil {
+			return false, err
+		}
 
 		clientSettings := InboundClientSetting{
 			ID:         random.RandomUUID(),
