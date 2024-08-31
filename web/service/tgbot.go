@@ -30,6 +30,7 @@ import (
 	tu "github.com/mymmrac/telego/telegoutil"
 	"github.com/valyala/fasthttp"
 	"github.com/valyala/fasthttp/fasthttpproxy"
+	"gorm.io/gorm"
 )
 
 var (
@@ -2093,22 +2094,13 @@ func (t *Tgbot) handleCanceledPayment(chatId int64, reason string) {
 	t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation")+reason)
 }
 
-func (t *Tgbot) handleSucceededPayment(subId, email string, chatId, tgId int64) (error error) {
+func (t *Tgbot) handleSucceededPayment(tx *gorm.DB, subId, email string, chatId, tgId int64) (error error) {
 	_, client, err := t.inboundService.GetClientByEmailIfExists(email)
 	if err != nil {
 		logger.Errorf("Error getting client inbound by email=%s %s", email, err.Error())
 		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
 		return
 	}
-
-	tx := database.GetDB().Begin()
-	defer func() {
-		if err != nil {
-			tx.Rollback()
-		} else {
-			tx.Commit()
-		}
-	}()
 
 	expiryTime := time.Now().AddDate(0, 1, 0)
 
@@ -2156,7 +2148,9 @@ func (t *Tgbot) handleSucceededPayment(subId, email string, chatId, tgId int64) 
 			t.xrayService.SetToNeedRestart()
 		}
 	}
-	result := tx.Model(model.Payment{}).
+
+	var handledPayment model.Payment
+	result := tx.Model(&handledPayment).
 		Where("sub_id = ? AND email = ? AND tg_id = ?", subId, email, tgId).
 		Update("applied", true)
 
