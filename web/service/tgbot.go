@@ -300,6 +300,30 @@ func (t *Tgbot) answerCommand(message *telego.Message, chatId int64, isAdmin boo
 		} else {
 			msg += t.I18nBot("tgbot.commands.unknown")
 		}
+  case "subscribe":
+		onlyMessage = true
+		if len(commandArgs) > 0 {
+			emails, err := t.inboundService.getAllEmails()
+			if err != nil {
+				t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
+				return
+			}
+
+      userEmail := commandArgs[0]
+			for _, email := range emails {
+				if email == userEmail {
+				  t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.emailNotAvailable"))
+					return
+				}
+			}
+
+			fromID := int64(message.From.ID)
+			t.sendSinglePaymentLink(chatId, fromID, userEmail)
+      return
+		} else {
+			msg += t.I18nBot("tgbot.commands.usage")
+		}
+
 	default:
 		msg += t.I18nBot("tgbot.commands.unknown")
 	}
@@ -880,56 +904,6 @@ func (t *Tgbot) answerCallback(callbackQuery *telego.CallbackQuery, isAdmin bool
 			tgUserID := callbackQuery.From.ID
 			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.subscriptions"))
 			t.sendSubscriptions(chatId, tgUserID)
-		}
-	} else {
-		switch dataArray[0] {
-		case "subscribe":
-			tgUserID := callbackQuery.From.ID
-			userEmail := dataArray[2]
-
-			emails, err := t.inboundService.getAllEmails()
-			if err != nil {
-				t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.errorOperation"))
-				return
-			}
-
-			for _, email := range emails {
-				if email == userEmail {
-					t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.emailNotAvailable"))
-					return
-				}
-			}
-
-			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.subscribe"))
-			t.sendSinglePaymentLink(chatId, tgUserID, userEmail)
-		case "subscribedWithEmail":
-			userEmail := dataArray[2]
-			if userEmail != "" {
-				t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.emptyEmail"))
-				return
-			}
-
-			emails, err := t.inboundService.getAllEmails()
-			if err != nil {
-				t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.errorOperation"))
-				return
-			}
-
-			for _, email := range emails {
-				if email == userEmail {
-					t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.emailNotAvailable"))
-					return
-				}
-			}
-
-			traffic, err := t.inboundService.GetClientTrafficByEmail(userEmail)
-			if err != nil {
-				t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.errorOperation"))
-				return
-			}
-
-			t.inboundService.SetClientTelegramUserID(traffic.Id, callbackQuery.From.ID)
-			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.successfulOperation"))
 		}
 	}
 }
@@ -1790,7 +1764,7 @@ func (t *Tgbot) sendSubscriptions(chatId int64, tgUserId int64) {
 
 	var buttons []telego.InlineKeyboardButton
 
-	buttons = append(buttons, tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.subscribe")).WithCallbackData(t.encodeQuery("enterEmail")))
+	buttons = append(buttons, tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.subscribe")))
 	if len(traffics) == 0 {
 		msg += t.I18nBot("tgbot.firstSub")
 		inlineKeyboard := tu.InlineKeyboard(tu.InlineKeyboardRow(buttons...))
