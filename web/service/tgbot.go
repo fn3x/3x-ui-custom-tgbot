@@ -2024,7 +2024,6 @@ func (t *Tgbot) handleSucceededPayment(tx *gorm.DB, payment *model.Payment) (app
 		inbound := allInbounds[0]
 		var defaultSetting InboundSettings
 		err = json.Unmarshal([]byte(inbound.Settings), &defaultSetting)
-
 		if err != nil {
 			return false, err
 		}
@@ -2043,13 +2042,17 @@ func (t *Tgbot) handleSucceededPayment(tx *gorm.DB, payment *model.Payment) (app
 			Clients: []InboundClientSetting{clientSettings},
 		}
 
-		settingJson, _ := json.Marshal(inboundSettings)
+		settingJson, err := json.Marshal(inboundSettings)
+		if err != nil {
+			return false, err
+		}
+
 		newInboundSettings := model.Inbound{
 			Id:       inbound.Id,
 			Settings: string(settingJson),
 		}
 
-		settingsIndent, _ := json.MarshalIndent(inboundSettings, "", "  ")
+		settingsIndent, _ := json.MarshalIndent(newInboundSettings, "", "  ")
 		logger.Infof("prepare client inbound: ok %s", settingsIndent)
 		needRestart := true
 
