@@ -516,6 +516,7 @@
 "getID" = "🆔 Kimliğiniz: <code>{{ .ID }}</code>"
 "helpAdminCommands" = "Bir müşteri e-postasını aramak için:\r\n<code>/usage [E-posta]</code>\r\n\r\nGelenleri aramak için (müşteri istatistikleri ile):\r\n<code>/inbound [Açıklama]</code>\r\n\r\nTelegram Sohbet Kimliği:\r\n<code>/id</code>"
 "helpClientCommands" = "İstatistikleri aramak için şu komutu kullanın:\r\n\r\n<code>/usage [E-posta]</code>\r\n\r\nTelegram Sohbet Kimliği:\r\n<code>/id</code>"
+"needEmail" = "❗Please provide your nickname to subscribe!"
 
 [tgbot.messages]
 "cpuThreshold" = "🔴 CPU Yükü {{ .Percent }}% eşiği {{ .Threshold }}%'yi aşıyor"
