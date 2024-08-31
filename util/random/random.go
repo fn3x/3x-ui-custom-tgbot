@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"fmt"
 	mathRand "math/rand"
+	"strings"
 )
 
 var (
@@ -15,7 +16,9 @@ var (
 	allSeq      [62]rune
 )
 
-func init() {
+var seq = strings.Split("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", "")
+
+func Init() {
 	for i := 0; i < 10; i++ {
 		numSeq[i] = rune('0' + i)
 	}
@@ -48,12 +51,12 @@ func Num(n int) int {
 }
 
 func RandomLowerAndNum(n int) string {
-	runes := make([]rune, n)
+	str := ""
 	for i := 0; i < n; i++ {
-		runes = append(runes, numLowerSeq[mathRand.Intn(len(numLowerSeq))])
+		str += seq[mathRand.Intn(len(seq))]
 	}
 
-	return string(runes)
+	return str
 }
 
 func RandomUUID() string {
