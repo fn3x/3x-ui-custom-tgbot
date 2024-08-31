@@ -1381,27 +1381,30 @@ show_menu() {
   ${green}7.${plain} Reset Web Base Path
   ${green}8.${plain} Reset Settings
   ${green}9.${plain} Change Port
-  ${green}10.${plain} Reset yookassa shop id and api key
-  ${green}11.${plain} View Current Settings
+  ${green}10.${plain} View Current Settings
 ————————————————
-  ${green}12.${plain} Start
-  ${green}13.${plain} Stop
-  ${green}14.${plain} Restart
-  ${green}15.${plain} Check Status
-  ${green}16.${plain} Check Logs
+  ${green}11.${plain} Reset yookassa shop id and api key
+  ${green}12.${plain} Change email for receipts
+  ${green}13.${plain} Change port for yookassa webhooks
 ————————————————
-  ${green}17.${plain} Enable Autostart
-  ${green}18.${plain} Disable Autostart
+  ${green}13.${plain} Start
+  ${green}14.${plain} Stop
+  ${green}15.${plain} Restart
+  ${green}16.${plain} Check Status
+  ${green}17.${plain} Check Logs
 ————————————————
-  ${green}19.${plain} SSL Certificate Management
-  ${green}20.${plain} Cloudflare SSL Certificate
-  ${green}21.${plain} IP Limit Management
-  ${green}22.${plain} WARP Management
-  ${green}23.${plain} Firewall Management
+  ${green}18.${plain} Enable Autostart
+  ${green}19.${plain} Disable Autostart
 ————————————————
-  ${green}24.${plain} Enable BBR 
-  ${green}25.${plain} Update Geo Files
-  ${green}26.${plain} Speedtest by Ookla
+  ${green}20.${plain} SSL Certificate Management
+  ${green}21.${plain} Cloudflare SSL Certificate
+  ${green}22.${plain} IP Limit Management
+  ${green}23.${plain} WARP Management
+  ${green}24.${plain} Firewall Management
+————————————————
+  ${green}25.${plain} Enable BBR 
+  ${green}26.${plain} Update Geo Files
+  ${green}27.${plain} Speedtest by Ookla
 "
     show_status
     echo && read -p "Please enter your selection [0-25]: " num
@@ -1438,10 +1441,10 @@ show_menu() {
         check_install && set_port
         ;;
     10)
-        check_install && set_yookassa
+        check_install && check_config
         ;;
     11)
-        check_install && set_email
+        check_install && set_yookassa
         ;;
     12)
         check_install && set_email
@@ -1495,7 +1498,7 @@ show_menu() {
         run_speedtest
         ;;
     *)
-        LOGE "Please enter the correct number [0-25]"
+        LOGE "Please enter the correct number [0-27]"
         ;;
     esac
 }
