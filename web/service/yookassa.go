@@ -9,6 +9,37 @@ import (
 	"x-ui/database/model"
 )
 
+type (
+	CancellationParty  = string
+	CancellationReason = string
+)
+
+const (
+	YOO_MONEY                     CancellationParty  = "yoo_money"
+	PAYMENT_NETWORK               CancellationParty  = "payment_network"
+	MERCHANT                      CancellationParty  = "merchant"
+	SECURE_FAILED                 CancellationReason = "3d_secure_failed"
+	CALL_ISSUER                   CancellationReason = "call_issuer"
+	CANCELED_BY_MERCHANT          CancellationReason = "canceled_by_merchant"
+	CARD_EXPIRED                  CancellationReason = "card_expired"
+	COUNTRY_FORBIDDEN             CancellationReason = "country_forbidden"
+	DEAL_EXPIRED                  CancellationReason = "deal_expired"
+	EXPIRED_ON_CAPTURE            CancellationReason = "expired_on_capture"
+	EXPIRED_ON_CONFIRMATION       CancellationReason = "expired_on_confirmation"
+	FRAUD_SUSPECTED               CancellationReason = "fraud_suspected"
+	GENERAL_DECLINE               CancellationReason = "general_decline"
+	IDENTIFICATION_REQUIRED       CancellationReason = "identification_required"
+	INSUFFICIENT_FUNDS            CancellationReason = "insufficient_funds"
+	INTERNAL_TIMEOUT              CancellationReason = "internal_timeout"
+	INVALID_CARD_NUMBER           CancellationReason = "invalid_card_number"
+	INVALID_CSC                   CancellationReason = "invalid_csc"
+	ISSUER_UNAVAILABLE            CancellationReason = "issuer_unavailable"
+	PAYMENT_METHOD_LIMIT_EXCEEDED CancellationReason = "payment_method_limit_exceeded"
+	PAYMENT_METHOD_RESTRICTED     CancellationReason = "payment_method_restricted"
+	PERMISSION_REVOKED            CancellationReason = "permission_revoked"
+	UNSUPPORTED_MOBILE_OPERATOR   CancellationReason = "unsupported_mobile_operator"
+)
+
 type Amount struct {
 	Value    string `json:"value"`
 	Currency string `json:"currency"`
@@ -66,6 +97,10 @@ type PaymentResponse struct {
 		Saved bool   `json:"saved"`
 		Type  string `json:"type"`
 	} `json:"payment_method"`
+	CancellationDetails struct {
+		Party  CancellationParty  `json:"party"`
+		Reason CancellationReason `json:"reason"`
+	} `json:"cancellation_details"`
 	Test        bool   `json:"test"`
 	Type        string `json:"type"`
 	Code        string `json:"code"`

@@ -299,7 +299,7 @@ func (t *Tgbot) answerCommand(message *telego.Message, chatId int64, isAdmin boo
 		} else {
 			msg += t.I18nBot("tgbot.commands.unknown")
 		}
-  case "subscribe":
+	case "subscribe":
 		onlyMessage = true
 		if len(commandArgs) > 0 {
 			emails, err := t.inboundService.getAllEmails()
@@ -308,17 +308,17 @@ func (t *Tgbot) answerCommand(message *telego.Message, chatId int64, isAdmin boo
 				return
 			}
 
-      userEmail := commandArgs[0]
+			userEmail := commandArgs[0]
 			for _, email := range emails {
 				if email == userEmail {
-				  t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.emailNotAvailable"))
+					t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.emailNotAvailable"))
 					return
 				}
 			}
 
 			fromID := int64(message.From.ID)
 			t.sendSinglePaymentLink(chatId, fromID, userEmail)
-      return
+			return
 		} else {
 			msg += t.I18nBot("tgbot.commands.needEmail")
 		}
@@ -1989,8 +1989,12 @@ func (t *Tgbot) registerWebhook(webhook Webhook, shopId int, apiKey, idempotence
 	return webhookResponse, nil
 }
 
-func (t *Tgbot) handlePaidSub(subId, email string, chatId, tgId int64) {
-	_, client, err := t.inboundService.GetClientByEmail(email)
+func (t *Tgbot) handleCanceledPayment(chatId int64, reason string) {
+	t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation")+reason)
+}
+
+func (t *Tgbot) handleSucceededPayment(subId, email string, chatId, tgId int64) (error error) {
+	_, client, err := t.inboundService.GetClientByEmailIfExists(email)
 	if err != nil {
 		logger.Errorf("Error getting client inbound by email=%s %s", email, err.Error())
 		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
@@ -2014,7 +2018,7 @@ func (t *Tgbot) handlePaidSub(subId, email string, chatId, tgId int64) {
 		if err != nil {
 			logger.Errorf("Error updating client inbound with email=%s %v", email, err.Error())
 			t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
-			return
+			return err
 		}
 	} else {
 		allInbounds, err := t.inboundService.GetAllInbounds()
@@ -2046,7 +2050,7 @@ func (t *Tgbot) handlePaidSub(subId, email string, chatId, tgId int64) {
 		if err != nil {
 			logger.Errorf("Error adding client inbound with email=%s %v", email, err.Error())
 			t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
-			return
+			return err
 		}
 		if needRestart {
 			t.xrayService.SetToNeedRestart()
@@ -2061,7 +2065,10 @@ func (t *Tgbot) handlePaidSub(subId, email string, chatId, tgId int64) {
 
 	if err != nil || affectedRows == 0 {
 		logger.Errorf("Did not enable sub after payment. subId=%s email=%s tgId=%d %s", subId, email, tgId, err)
+		return err
 	}
+
+	return nil
 }
 
 func (t *Tgbot) sendSubscription(chatId int64, email string) {
