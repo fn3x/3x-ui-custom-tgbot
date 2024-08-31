@@ -17,16 +17,16 @@ import (
 )
 
 type InboundClientSetting struct {
-	ID         string `json:"id"`
-	Flow       string `json:"flow"`
-	Email      string `json:"email"`
-	LimitIP    int    `json:"limitIp"`
-	TotalGB    int    `json:"totalGB"`
-	ExpiryTime int64  `json:"expiryTime"`
-	Enable     bool   `json:"enable"`
-	TgID       string `json:"tgId"`
-	SubID      string `json:"subId"`
-	Reset      int    `json:"reset"`
+	ID         string      `json:"id"`
+	Flow       string      `json:"flow"`
+	Email      string      `json:"email"`
+	LimitIP    int         `json:"limitIp"`
+	TotalGB    int         `json:"totalGB"`
+	ExpiryTime int64       `json:"expiryTime"`
+	Enable     bool        `json:"enable"`
+	TgID       interface{} `json:"tgId"`
+	SubID      string      `json:"subId"`
+	Reset      int         `json:"reset"`
 }
 
 type InboundSettings struct {
