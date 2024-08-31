@@ -1910,7 +1910,7 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64, email string
 		return
 	}
 
-	_, client, err := t.inboundService.GetClientByEmail(email)
+	_, client, err := t.inboundService.GetClientByEmailIfExists(email)
 	if err != nil {
 		logger.Errorf("Couldn't get client by email=%s %v", email, err)
 		return
@@ -2165,7 +2165,7 @@ func (t *Tgbot) handlePaidSub(subId, email string, chatId, tgId int64) {
 }
 
 func (t *Tgbot) sendSubscription(chatId int64, email string) {
-	_, client, err := t.inboundService.GetClientByEmail(email)
+	_, client, err := t.inboundService.GetClientByEmailIfExists(email)
 	if err != nil {
 		logger.Errorf("Error getting client inbound by email=%s %v", email, err.Error())
 		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
