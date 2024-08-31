@@ -138,7 +138,7 @@ func (w *WebhookService) WebhookHandler(wr http.ResponseWriter, r *http.Request)
 
 	switch notification.Object.Status {
 	case model.Succeeded:
-		err = w.tgBot.handleSucceededPayment(payment.SubId, payment.Email, payment.ChatId, payment.TgID)
+		err = w.tgBot.handleSucceededPayment(tx, payment.SubId, payment.Email, payment.ChatId, payment.TgID)
 		if err != nil {
 			return
 		}
