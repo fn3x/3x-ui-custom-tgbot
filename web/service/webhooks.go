@@ -120,33 +120,25 @@ func (w *WebhookService) WebhookHandler(wr http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	var updatePayment model.Payment
-	result = tx.
-		Model(&updatePayment).
-		Where("payment_id = ?", notification.Object.Id).
-		Updates(model.Payment{
-			Status:            notification.Object.Status,
-			PaymentMethodId:   notification.Object.PaymentMethod.Id,
-			PaymentMethodType: notification.Object.PaymentMethod.Type,
-			Saved:             notification.Object.PaymentMethod.Saved,
-		})
+	payment.Status = notification.Object.Status
+	payment.PaymentMethodId = notification.Object.PaymentMethod.Id
+	payment.PaymentMethodType = notification.Object.PaymentMethod.Type
+	payment.Saved = notification.Object.PaymentMethod.Saved
+	tx.Save(&payment)
+
 	if result.Error != nil {
 		err = result.Error
 		http.Error(wr, "Server error", 500)
 		return
 	}
 
+	var applied bool
 	switch notification.Object.Status {
 	case model.Succeeded:
-		err = w.tgBot.handleSucceededPayment(tx, payment.SubId, payment.Email, payment.ChatId, payment.TgID)
+		applied, err = w.tgBot.handleSucceededPayment(tx, &payment)
 		if err != nil {
 			return
 		}
-		var handledPayment model.Payment
-		tx.
-			Model(&handledPayment).
-			Where("payment_id = ?", notification.Object.Id).
-			Update("applied", true)
 
 	case model.Canceled:
 		reason := fmt.Sprintf("Party=%s Reason=%s", notification.Object.CancellationDetails.Party, notification.Object.CancellationDetails.Reason)
@@ -155,13 +147,11 @@ func (w *WebhookService) WebhookHandler(wr http.ResponseWriter, r *http.Request)
 			return
 		}
 
-		var handledPayment model.Payment
-		tx.
-			Model(&handledPayment).
-			Where("payment_id = ?", notification.Object.Id).
-			Update("applied", true)
+		applied = true
 	}
 
+	payment.Applied = applied
+	tx.Save(&payment)
 	w.removeWebhook(payment.SucceededId)
 	w.removeWebhook(payment.CanceledId)
 }
