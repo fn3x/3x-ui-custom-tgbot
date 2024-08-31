@@ -2049,8 +2049,11 @@ func (t *Tgbot) handleSucceededPayment(tx *gorm.DB, payment *model.Payment) (app
 			Settings: string(settingJson),
 		}
 
-		logger.Info("prepare client inbound: ok")
-		needRestart, err := t.inboundService.AddInboundClient(&newInboundSettings)
+		settingsIndent, _ := json.MarshalIndent(inboundSettings, "", "  ")
+		logger.Infof("prepare client inbound: ok %s", settingsIndent)
+		needRestart := true
+
+		needRestart, err = t.inboundService.AddInboundClient(&newInboundSettings)
 		if err != nil {
 			logger.Errorf("Error adding client inbound with email=%s %v", payment.Email, err.Error())
 			t.SendMsgToTgbot(payment.ChatId, t.I18nBot("tgbot.answers.errorOperation"))
