@@ -2105,6 +2105,7 @@ func (t *Tgbot) handleSucceededPayment(tx *gorm.DB, payment *model.Payment) (app
 	expiryTime := time.Now().AddDate(0, 1, 0)
 
 	if client != nil {
+		logger.Info("client is not nil: ok")
 		client.ExpiryTime = expiryTime.Unix()
 		err := t.inboundService.UpdateClientStat(tx, payment.Email, client)
 		if err != nil {
@@ -2114,6 +2115,7 @@ func (t *Tgbot) handleSucceededPayment(tx *gorm.DB, payment *model.Payment) (app
 		}
 		logger.Info("update client stat: ok")
 	} else {
+		logger.Info("client is nil: ok")
 		allInbounds, err := t.inboundService.GetAllInbounds()
 		inbound := allInbounds[0]
 		var defaultSetting []InboundSettings
@@ -2139,6 +2141,7 @@ func (t *Tgbot) handleSucceededPayment(tx *gorm.DB, payment *model.Payment) (app
 			Settings: string(settingJson),
 		}
 
+		logger.Info("prepare client inbound: ok")
 		needRestart, err := t.inboundService.AddInboundClient(&newInboundSettings)
 		if err != nil {
 			logger.Errorf("Error adding client inbound with email=%s %v", payment.Email, err.Error())
