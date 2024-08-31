@@ -24,7 +24,7 @@ type InboundClientSetting struct {
 	TotalGB    int    `json:"totalGB"`
 	ExpiryTime int64  `json:"expiryTime"`
 	Enable     bool   `json:"enable"`
-	TgID       int64  `json:"tgId"`
+	TgID       string `json:"tgId"`
 	SubID      string `json:"subId"`
 	Reset      int    `json:"reset"`
 }

@@ -2035,7 +2035,7 @@ func (t *Tgbot) handleSucceededPayment(tx *gorm.DB, payment *model.Payment) (app
 			Email:      payment.Email,
 			ExpiryTime: expiryTime.Unix(),
 			Enable:     true,
-			TgID:       payment.TgID,
+			TgID:       string(payment.TgID),
 			SubID:      payment.SubId,
 		}
 
