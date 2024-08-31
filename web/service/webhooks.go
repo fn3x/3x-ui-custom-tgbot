@@ -40,7 +40,7 @@ type WebhookNotification struct {
 
 type WebhookService struct {
 	settingService SettingService
-	tgBot          *Tgbot
+	tgbotService Tgbot
 }
 
 func (w *WebhookService) NewWebhookService() *WebhookService {
@@ -133,7 +133,7 @@ func (w *WebhookService) WebhookHandler(wr http.ResponseWriter, r *http.Request)
 	switch notification.Event {
 	case Succeeded:
 		logger.Info("notification event == payment.succeeded: ok")
-		applied, err = w.tgBot.handleSucceededPayment(tx, &payment)
+		applied, err = w.tgbotService.handleSucceededPayment(tx, &payment)
 		if err != nil {
 			return
 		}
@@ -142,7 +142,7 @@ func (w *WebhookService) WebhookHandler(wr http.ResponseWriter, r *http.Request)
 	case Canceled:
 		logger.Info("notification event == payment.canceled: ok")
 		reason := fmt.Sprintf("Party=%s Reason=%s", notification.Object.CancellationDetails.Party, notification.Object.CancellationDetails.Reason)
-		w.tgBot.handleCanceledPayment(payment.ChatId, reason)
+		w.tgbotService.handleCanceledPayment(payment.ChatId, reason)
 		applied = true
 		logger.Info("payment applied(cancel): ok")
 	}
