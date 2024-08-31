@@ -130,15 +130,15 @@ func (w *WebhookService) WebhookHandler(wr http.ResponseWriter, r *http.Request)
 	payment.Saved = notification.Object.PaymentMethod.Saved
 
 	var applied bool
-	switch notification.Object.Status {
-	case model.Succeeded:
+	switch notification.Event {
+	case Succeeded:
 		applied, err = w.tgBot.handleSucceededPayment(tx, &payment)
 		if err != nil {
 			return
 		}
 		logger.Info("payment applied(success): ok")
 
-	case model.Canceled:
+	case Canceled:
 		reason := fmt.Sprintf("Party=%s Reason=%s", notification.Object.CancellationDetails.Party, notification.Object.CancellationDetails.Reason)
 		w.tgBot.handleCanceledPayment(payment.ChatId, reason)
 		applied = true
