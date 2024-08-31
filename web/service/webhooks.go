@@ -91,15 +91,17 @@ func (w *WebhookService) WebhookHandler(wr http.ResponseWriter, r *http.Request)
 	defer func() {
 		if err == nil {
 			tx.Commit()
+			wr.WriteHeader(http.StatusOK)
 		} else {
 			jsonWebhook, _ := json.MarshalIndent(notification, "", "  ")
-			logger.Errorf("Couldn't handle webhook notification. Rolling back..\r\nNotification=%s\r\nError=%s", err, jsonWebhook, err)
+			logger.Errorf("Couldn't handle webhook notification. Rolling back..\r\nNotification=%s\r\nError=%s", err, jsonWebhook, err.Error())
 			tx.Rollback()
+			http.Error(wr, "Bad Request", http.StatusBadRequest)
 		}
 	}()
 
 	var payment model.Payment
-	result := tx.First(&payment, "payment_id = ?", notification.Object.Id)
+	result := tx.Select(&payment, "payment_id = ?", notification.Object.Id)
 
 	if err = result.Error; err != nil {
 		return
@@ -134,7 +136,6 @@ func (w *WebhookService) WebhookHandler(wr http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	wr.WriteHeader(http.StatusOK)
 	switch notification.Object.Status {
 	case model.Succeeded:
 		err = w.tgBot.handleSucceededPayment(payment.SubId, payment.Email, payment.ChatId, payment.TgID)
