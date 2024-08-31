@@ -111,6 +111,13 @@ func (w *WebhookService) WebhookHandler(wr http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	if payment.Applied {
+		logger.Warningf("Removing applied payment's webhooks")
+		w.removeWebhook(payment.SucceededId)
+		w.removeWebhook(payment.CanceledId)
+		return
+	}
+
 	var updatePayment model.Payment
 	result = tx.
 		Model(&updatePayment).
