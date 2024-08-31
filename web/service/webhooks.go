@@ -96,7 +96,7 @@ func (w *WebhookService) WebhookHandler(wr http.ResponseWriter, r *http.Request)
 			wr.WriteHeader(http.StatusOK)
 		} else {
 			jsonWebhook, _ := json.MarshalIndent(notification, "", "  ")
-			logger.Errorf("Couldn't handle webhook notification. Rolling back..\r\nNotification=%s\r\nError=%s", err, jsonWebhook, err.Error())
+			logger.Errorf("Couldn't handle webhook notification. Rolling back..\r\nNotification=%s\r\nError=%s", jsonWebhook, err.Error())
 			tx.Rollback()
 			http.Error(wr, "Bad Request", http.StatusBadRequest)
 		}
