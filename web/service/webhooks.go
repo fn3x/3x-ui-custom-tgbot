@@ -2,6 +2,8 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -84,25 +86,33 @@ func (w *WebhookService) WebhookHandler(wr http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	jsonWebhook, _ := json.MarshalIndent(notification, "", "  ")
+	tx := database.GetDB().Begin()
+	var err error
+	defer func() {
+		if err == nil {
+			tx.Commit()
+		} else {
+			jsonWebhook, _ := json.MarshalIndent(notification, "", "  ")
+			logger.Errorf("Couldn't handle webhook notification. Rolling back..\r\nNotification=%s\r\nError=%s", err, jsonWebhook, err)
+			tx.Rollback()
+		}
+	}()
 
-	db := database.GetDB()
 	var payment model.Payment
-	result := db.First(&payment, "payment_id = ?", notification.Object.Id)
+	result := tx.First(&payment, "payment_id = ?", notification.Object.Id)
 
-	if result.Error != nil {
-		logger.Errorf("Database select payment error %s", result.Error.Error())
+	if err = result.Error; err != nil {
 		return
 	}
 
 	if result.RowsAffected == 0 {
-		logger.Errorf("No payment found on webhook: %s", jsonWebhook)
+		err = errors.New("No payment found")
 		http.Error(wr, "No such payment", 404)
 		return
 	}
 
 	var updatePayment model.Payment
-	result = db.
+	result = tx.
 		Model(&updatePayment).
 		Where("payment_id = ?", notification.Object.Id).
 		Updates(model.Payment{
@@ -112,13 +122,38 @@ func (w *WebhookService) WebhookHandler(wr http.ResponseWriter, r *http.Request)
 			Saved:             notification.Object.PaymentMethod.Saved,
 		})
 	if result.Error != nil {
-		logger.Errorf("Couldn't update payment(id=%d) on webhook notification(event=%s). Reason: %s", payment.PaymentId, notification.Event, result.Error.Error())
+		err = result.Error
 		http.Error(wr, "Server error", 500)
 		return
 	}
 
 	wr.WriteHeader(http.StatusOK)
-	if notification.Object.Status == model.Succeeded {
-		w.tgBot.handlePaidSub(payment.SubId, payment.Email, payment.ChatId, payment.TgID)
+	switch notification.Object.Status {
+	case model.Succeeded:
+		err = w.tgBot.handleSucceededPayment(payment.SubId, payment.Email, payment.ChatId, payment.TgID)
+		if err != nil {
+			return
+		}
+		var handledPayment model.Payment
+		tx.
+			Model(&handledPayment).
+			Where("payment_id = ?", notification.Object.Id).
+			Update("applied", true)
+
+	case model.Canceled:
+		reason := fmt.Sprintf("Party=%s Reason=%s", notification.Object.CancellationDetails.Party, notification.Object.CancellationDetails.Reason)
+		w.tgBot.handleCanceledPayment(payment.ChatId, reason)
+		if err != nil {
+			return
+		}
+
+		var handledPayment model.Payment
+		tx.
+			Model(&handledPayment).
+			Where("payment_id = ?", notification.Object.Id).
+			Update("applied", true)
 	}
+
+	w.removeWebhook(payment.SucceededId)
+	w.removeWebhook(payment.CanceledId)
 }
