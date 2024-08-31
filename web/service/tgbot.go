@@ -321,7 +321,7 @@ func (t *Tgbot) answerCommand(message *telego.Message, chatId int64, isAdmin boo
 			t.sendSinglePaymentLink(chatId, fromID, userEmail)
       return
 		} else {
-			msg += t.I18nBot("tgbot.commands.usage")
+			msg += t.I18nBot("tgbot.commands.needEmail")
 		}
 
 	default:

@@ -516,6 +516,7 @@
 "getID" = "🆔 شناسه شما: <code>{{ .ID }}</code>"
 "helpAdminCommands" = "برای جستجوی ایمیل مشتری:\r\n<code>/usage [ایمیل]</code>\r\n\r\nبرای جستجوی ورودی‌ها (با آمار مشتری):\r\n<code>/inbound [توضیحات]</code>\r\n\r\nشناسه گفتگوی تلگرام:\r\n<code>/id</code>"
 "helpClientCommands" = "برای جستجوی آمار، از دستور زیر استفاده کنید:\r\n<code>/usage [ایمیل]</code>\r\n\r\nشناسه گفتگوی تلگرام:\r\n<code>/id</code>"
+"needEmail" = "❗Please provide your nickname to subscribe!"
 
 [tgbot.messages]
 "cpuThreshold" = "🔴 بار ‌پردازنده {{ .Percent }}% بیشتر از آستانه است {{ .Threshold }}%"
