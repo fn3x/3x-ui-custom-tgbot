@@ -86,6 +86,8 @@ func (w *WebhookService) WebhookHandler(wr http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	logger.Info("parsing request: ok")
+
 	tx := database.GetDB().Begin()
 	var err error
 	defer func() {
@@ -113,6 +115,8 @@ func (w *WebhookService) WebhookHandler(wr http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	logger.Info("db select payment: ok")
+
 	if payment.Applied {
 		logger.Warningf("Removing applied payment's webhooks")
 		w.removeWebhook(payment.SucceededId)
@@ -124,13 +128,6 @@ func (w *WebhookService) WebhookHandler(wr http.ResponseWriter, r *http.Request)
 	payment.PaymentMethodId = notification.Object.PaymentMethod.Id
 	payment.PaymentMethodType = notification.Object.PaymentMethod.Type
 	payment.Saved = notification.Object.PaymentMethod.Saved
-	tx.Save(&payment)
-
-	if result.Error != nil {
-		err = result.Error
-		http.Error(wr, "Server error", 500)
-		return
-	}
 
 	var applied bool
 	switch notification.Object.Status {
@@ -139,19 +136,19 @@ func (w *WebhookService) WebhookHandler(wr http.ResponseWriter, r *http.Request)
 		if err != nil {
 			return
 		}
+		logger.Info("payment applied(success): ok")
 
 	case model.Canceled:
 		reason := fmt.Sprintf("Party=%s Reason=%s", notification.Object.CancellationDetails.Party, notification.Object.CancellationDetails.Reason)
 		w.tgBot.handleCanceledPayment(payment.ChatId, reason)
-		if err != nil {
-			return
-		}
-
 		applied = true
+		logger.Info("payment applied(cancel): ok")
 	}
 
 	payment.Applied = applied
 	tx.Save(&payment)
+	logger.Info("db payment update: ok")
 	w.removeWebhook(payment.SucceededId)
 	w.removeWebhook(payment.CanceledId)
+	logger.Info("webhooks remove: ok")
 }
