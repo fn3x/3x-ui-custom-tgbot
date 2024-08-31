@@ -2022,7 +2022,7 @@ func (t *Tgbot) handleSucceededPayment(tx *gorm.DB, payment *model.Payment) (app
 		}
 
 		inbound := allInbounds[0]
-		var defaultSetting []InboundSettings
+		var defaultSetting InboundSettings
 		err = json.Unmarshal([]byte(inbound.Settings), &defaultSetting)
 
 		if err != nil {
@@ -2031,7 +2031,7 @@ func (t *Tgbot) handleSucceededPayment(tx *gorm.DB, payment *model.Payment) (app
 
 		clientSettings := InboundClientSetting{
 			ID:         random.RandomUUID(),
-			Flow:       defaultSetting[0].Clients[0].Flow,
+			Flow:       defaultSetting.Clients[0].Flow,
 			Email:      payment.Email,
 			ExpiryTime: expiryTime.Unix(),
 			Enable:     true,
