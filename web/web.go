@@ -85,15 +85,16 @@ type Server struct {
 	webhookHttpServer *http.Server
 	webhookListener   net.Listener
 
-	index  *controller.IndexController
-	server *controller.ServerController
+	index    *controller.IndexController
+	server   *controller.ServerController
 	webhooks *controller.WebhookServerController
-	panel  *controller.XUIController
-	api    *controller.APIController
+	panel    *controller.XUIController
+	api      *controller.APIController
 
 	xrayService    service.XrayService
 	settingService service.SettingService
 	tgbotService   service.Tgbot
+	webhookService service.WebhookService
 
 	cron *cron.Cron
 
@@ -427,6 +428,8 @@ func (s *Server) Start() (err error) {
 		tgBot := s.tgbotService.NewTgbot()
 		tgBot.Start(i18nFS)
 	}
+
+	s.webhookService.NewWebhookService()
 
 	return nil
 }

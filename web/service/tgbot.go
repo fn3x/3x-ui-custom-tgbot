@@ -54,7 +54,6 @@ type Tgbot struct {
 	settingService SettingService
 	serverService  ServerService
 	xrayService    XrayService
-	webhookService WebhookService
 	lastStatus     *Status
 }
 
