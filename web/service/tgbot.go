@@ -1994,23 +1994,23 @@ func (t *Tgbot) handleCanceledPayment(chatId int64, reason string) {
 	t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation")+reason)
 }
 
-func (t *Tgbot) handleSucceededPayment(tx *gorm.DB, subId, email string, chatId, tgId int64) (error error) {
-	_, client, err := t.inboundService.GetClientByEmailIfExists(email)
+func (t *Tgbot) handleSucceededPayment(tx *gorm.DB, payment *model.Payment) (applied bool, error error) {
+	_, client, err := t.inboundService.GetClientByEmailIfExists(payment.Email)
 	if err != nil {
-		logger.Errorf("Error getting client inbound by email=%s %s", email, err.Error())
-		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
-		return
+		logger.Errorf("Error getting client inbound by email=%s %s", payment.Email, err.Error())
+		t.SendMsgToTgbot(payment.ChatId, t.I18nBot("tgbot.answers.errorOperation"))
+		return false, err
 	}
 
 	expiryTime := time.Now().AddDate(0, 1, 0)
 
 	if client != nil {
 		client.ExpiryTime = expiryTime.Unix()
-		err := t.inboundService.UpdateClientStat(tx, email, client)
+		err := t.inboundService.UpdateClientStat(tx, payment.Email, client)
 		if err != nil {
-			logger.Errorf("Error updating client inbound with email=%s %v", email, err.Error())
-			t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
-			return err
+			logger.Errorf("Error updating client inbound with email=%s %v", payment.Email, err.Error())
+			t.SendMsgToTgbot(payment.ChatId, t.I18nBot("tgbot.answers.errorOperation"))
+			return false, err
 		}
 	} else {
 		allInbounds, err := t.inboundService.GetAllInbounds()
@@ -2021,11 +2021,11 @@ func (t *Tgbot) handleSucceededPayment(tx *gorm.DB, subId, email string, chatId,
 		clientSettings := InboundClientSetting{
 			ID:         random.RandomUUID(),
 			Flow:       defaultSetting[0].Clients[0].Flow,
-			Email:      email,
+			Email:      payment.Email,
 			ExpiryTime: expiryTime.Unix(),
 			Enable:     true,
-			TgID:       tgId,
-			SubID:      subId,
+			TgID:       payment.TgID,
+			SubID:      payment.SubId,
 		}
 
 		inboundSettings := InboundSettings{
@@ -2040,29 +2040,16 @@ func (t *Tgbot) handleSucceededPayment(tx *gorm.DB, subId, email string, chatId,
 
 		needRestart, err := t.inboundService.AddInboundClient(&newInboundSettings)
 		if err != nil {
-			logger.Errorf("Error adding client inbound with email=%s %v", email, err.Error())
-			t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
-			return err
+			logger.Errorf("Error adding client inbound with email=%s %v", payment.Email, err.Error())
+			t.SendMsgToTgbot(payment.ChatId, t.I18nBot("tgbot.answers.errorOperation"))
+			return false, err
 		}
 		if needRestart {
 			t.xrayService.SetToNeedRestart()
 		}
 	}
 
-	var handledPayment model.Payment
-	result := tx.Model(&handledPayment).
-		Where("sub_id = ? AND email = ? AND tg_id = ?", subId, email, tgId).
-		Update("applied", true)
-
-	err = result.Error
-	affectedRows := result.RowsAffected
-
-	if err != nil || affectedRows == 0 {
-		logger.Errorf("Did not enable sub after payment. subId=%s email=%s tgId=%d %s", subId, email, tgId, err)
-		return err
-	}
-
-	return nil
+	return true, nil
 }
 
 func (t *Tgbot) sendSubscription(chatId int64, email string) {
