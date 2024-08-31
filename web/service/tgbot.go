@@ -2001,6 +2001,7 @@ func (t *Tgbot) handleSucceededPayment(tx *gorm.DB, payment *model.Payment) (app
 		t.SendMsgToTgbot(payment.ChatId, t.I18nBot("tgbot.answers.errorOperation"))
 		return false, err
 	}
+	logger.Info("get client by email: ok")
 
 	expiryTime := time.Now().AddDate(0, 1, 0)
 
@@ -2012,6 +2013,7 @@ func (t *Tgbot) handleSucceededPayment(tx *gorm.DB, payment *model.Payment) (app
 			t.SendMsgToTgbot(payment.ChatId, t.I18nBot("tgbot.answers.errorOperation"))
 			return false, err
 		}
+		logger.Info("update client stat: ok")
 	} else {
 		allInbounds, err := t.inboundService.GetAllInbounds()
 		inbound := allInbounds[0]
@@ -2044,6 +2046,7 @@ func (t *Tgbot) handleSucceededPayment(tx *gorm.DB, payment *model.Payment) (app
 			t.SendMsgToTgbot(payment.ChatId, t.I18nBot("tgbot.answers.errorOperation"))
 			return false, err
 		}
+		logger.Info("create inbound client: ok")
 		if needRestart {
 			t.xrayService.SetToNeedRestart()
 		}
