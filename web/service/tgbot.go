@@ -1783,9 +1783,9 @@ func (t *Tgbot) sendSubscriptions(chatId int64, tgUserId int64) {
 		remainingSeconds := traffic.ExpiryTime/1000 - now
 		if remainingSeconds < 0 {
 			// expired
-			buttons = append(buttons, tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.subInfo", "Email=="+traffic.Email, "Remaining=="+"🔴")).WithCallbackData(t.encodeQuery("subInfo "+traffic.Email)))
+			buttons = append(buttons, tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.subInfo", "Email=="+traffic.Email, "Remaining=="+"expired")).WithCallbackData(t.encodeQuery("subInfo "+traffic.Email)))
 		} else {
-			buttons = append(buttons, tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.subInfo", "Email=="+traffic.Email, "Remaining=="+"🟢")).WithCallbackData(t.encodeQuery("subInfo "+traffic.Email)))
+			buttons = append(buttons, tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.subInfo", "Email=="+traffic.Email, "Remaining=="+string(remainingSeconds))).WithCallbackData(t.encodeQuery("subInfo "+traffic.Email)))
 		}
 	}
 
