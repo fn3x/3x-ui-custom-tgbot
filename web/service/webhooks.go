@@ -138,7 +138,7 @@ func (w *WebhookService) WebhookHandler(wr http.ResponseWriter, r *http.Request)
 			return
 		}
 		logger.Debug("payment applied(success): ok")
-		w.tgbotService.sendSubscription(payment.ChatId, payment.Email)
+		w.tgbotService.sendSubscriptions(payment.ChatId, payment.TgID)
 		logger.Debug("send subscription: ok")
 
 	case Canceled:
