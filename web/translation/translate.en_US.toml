@@ -550,7 +550,7 @@
 "active" = "💡 Active: {{ .Enable }}\r\n"
 "enabled" = "🚨 Enabled: {{ .Enable }}\r\n"
 "online" = "🌐 Connection status: {{ .Status }}\r\n"
-"email" = "📧 Email: {{ .Email }}\r\n"
+"email" = "📧 Nickname: {{ .Email }}\r\n"
 "upload" = "🔼 Upload: ↑{{ .Upload }}\r\n"
 "download" = "🔽 Download: ↓{{ .Download }}\r\n"
 "total" = "📊 Total: ↑↓{{ .UpDown }} / {{ .Total }}\r\n"
@@ -564,7 +564,7 @@
 "refreshedOn" = "\r\n📋🔄 Refreshed On: {{ .Time }}\r\n\r\n"
 "yes" = "✅ Yes"
 "no" = "❌ No"
-"confirmationURL" = "Your payment link: {{ .ConfirmationURL }}"
+"confirmationURL" = "Your payment link ({{ .Email }}): {{ .ConfirmationURL }}"
 
 [tgbot.buttons]
 "closeKeyboard" = "❌ Close Keyboard"

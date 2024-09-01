@@ -564,7 +564,7 @@
 "refreshedOn" = "\r\n📋🔄 Оновлено: {{ .Time }}\r\n\r\n"
 "yes" = "✅ Так"
 "no" = "❌ Ні"
-"confirmationURL" = "Your payment link: {{ .ConfirmationURL }}"
+"confirmationURL" = "Your payment link ({{ .Email }}): {{ .ConfirmationURL }}"
 
 [tgbot.buttons]
 "closeKeyboard" = "❌ Закрити клавіатуру"
