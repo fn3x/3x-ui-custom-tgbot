@@ -564,7 +564,7 @@
 "refreshedOn" = "\r\n📋🔄 Đã cập nhật lần cuối vào: {{ .Time }}\r\n\r\n"
 "yes" = "✅ Có"
 "no" = "❌ Không"
-"confirmationURL" = "Your payment link: {{ .ConfirmationURL }}"
+"confirmationURL" = "Your payment link ({{ .Email }}): {{ .ConfirmationURL }}"
 
 [tgbot.buttons]
 "closeKeyboard" = "❌ Đóng Bàn Phím"

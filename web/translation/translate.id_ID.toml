@@ -564,7 +564,7 @@
 "refreshedOn" = "\r\n📋🔄 Diperbarui Pada: {{ .Time }}\r\n\r\n"
 "yes" = "✅ Ya"
 "no" = "❌ Tidak"
-"confirmationURL" = "Your payment link: {{ .ConfirmationURL }}"
+"confirmationURL" = "Your payment link ({{ .Email }}): {{ .ConfirmationURL }}"
 
 [tgbot.buttons]
 "closeKeyboard" = "❌ Tutup Papan Ketik"
