@@ -40,7 +40,7 @@ type WebhookNotification struct {
 
 type WebhookService struct {
 	settingService SettingService
-	tgbotService Tgbot
+	tgbotService   Tgbot
 }
 
 func (w *WebhookService) NewWebhookService() *WebhookService {
@@ -86,7 +86,7 @@ func (w *WebhookService) WebhookHandler(wr http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	logger.Info("parsing request: ok")
+	logger.Debug("parsing request: ok")
 
 	tx := database.GetDB().Begin()
 	var err error
@@ -115,7 +115,7 @@ func (w *WebhookService) WebhookHandler(wr http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	logger.Info("db select payment: ok")
+	logger.Debug("db select payment: ok")
 
 	if payment.Applied {
 		logger.Warningf("Removing applied payment's webhooks")
@@ -132,25 +132,27 @@ func (w *WebhookService) WebhookHandler(wr http.ResponseWriter, r *http.Request)
 	var applied bool
 	switch notification.Event {
 	case Succeeded:
-		logger.Info("notification event == payment.succeeded: ok")
+		logger.Debug("notification event == payment.succeeded: ok")
 		applied, err = w.tgbotService.handleSucceededPayment(tx, &payment)
 		if err != nil {
 			return
 		}
-		logger.Info("payment applied(success): ok")
+		logger.Debug("payment applied(success): ok")
+		w.tgbotService.sendSubscription(payment.ChatId, payment.Email)
+		logger.Debug("send subscription: ok")
 
 	case Canceled:
-		logger.Info("notification event == payment.canceled: ok")
+		logger.Debug("notification event == payment.canceled: ok")
 		reason := fmt.Sprintf("Party=%s Reason=%s", notification.Object.CancellationDetails.Party, notification.Object.CancellationDetails.Reason)
 		w.tgbotService.handleCanceledPayment(payment.ChatId, reason)
 		applied = true
-		logger.Info("payment applied(cancel): ok")
+		logger.Debug("payment applied(cancel): ok")
 	}
 
 	payment.Applied = applied
 	tx.Save(&payment)
-	logger.Info("db payment update: ok")
+	logger.Debug("db payment update: ok")
 	w.removeWebhook(payment.SucceededId)
 	w.removeWebhook(payment.CanceledId)
-	logger.Info("webhooks remove: ok")
+	logger.Debug("webhooks remove: ok")
 }

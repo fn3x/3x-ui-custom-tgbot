@@ -1760,7 +1760,7 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64, email string
 		return
 	}
 	prettyRequest, _ := json.MarshalIndent(payment, "", "  ")
-	logger.Infof("Request:%s\r\n", prettyRequest)
+	logger.Debugf("Request:%s\r\n", prettyRequest)
 
 	response, err := createPayment(payment, idempotenceKey, shopId, apiKey)
 	if err != nil {
@@ -1770,7 +1770,7 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64, email string
 	}
 
 	prettyResponse, _ := json.MarshalIndent(response, "", "  ")
-	logger.Infof("Response:%s\r\n", prettyResponse)
+	logger.Debugf("Response:%s\r\n", prettyResponse)
 
 	dbPayment := model.Payment{}
 	confirmationURL := ""
@@ -2000,7 +2000,7 @@ func (t *Tgbot) handleSucceededPayment(tx *gorm.DB, payment *model.Payment) (app
 		t.SendMsgToTgbot(payment.ChatId, t.I18nBot("tgbot.answers.errorOperation"))
 		return false, err
 	}
-	logger.Info("get client by email: ok")
+	logger.Debug("get client by email: ok")
 
 	expiryTime := time.Now().AddDate(0, 1, 0)
 
@@ -2013,9 +2013,9 @@ func (t *Tgbot) handleSucceededPayment(tx *gorm.DB, payment *model.Payment) (app
 			t.SendMsgToTgbot(payment.ChatId, t.I18nBot("tgbot.answers.errorOperation"))
 			return false, err
 		}
-		logger.Info("update client stat: ok")
+		logger.Debug("update client stat: ok")
 	} else {
-		logger.Info("client is nil: ok")
+		logger.Debug("client is nil: ok")
 		allInbounds, err := t.inboundService.GetAllInbounds()
 		if err != nil {
 			return false, err
@@ -2053,7 +2053,7 @@ func (t *Tgbot) handleSucceededPayment(tx *gorm.DB, payment *model.Payment) (app
 		}
 
 		settingsIndent, _ := json.MarshalIndent(newInboundSettings, "", "  ")
-		logger.Infof("prepare client inbound: ok %s", settingsIndent)
+		logger.Debugf("prepare client inbound: ok %s", settingsIndent)
 		needRestart := true
 
 		needRestart, err = t.inboundService.AddInboundClientWithTx(tx, &newInboundSettings)
@@ -2062,7 +2062,7 @@ func (t *Tgbot) handleSucceededPayment(tx *gorm.DB, payment *model.Payment) (app
 			t.SendMsgToTgbot(payment.ChatId, t.I18nBot("tgbot.answers.errorOperation"))
 			return false, err
 		}
-		logger.Info("create inbound client: ok")
+		logger.Debug("create inbound client: ok")
 		if needRestart {
 			t.xrayService.SetToNeedRestart()
 		}
