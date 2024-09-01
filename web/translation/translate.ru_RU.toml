@@ -601,7 +601,7 @@
 "allClients" = "Все клиенты"
 "subscriptions" = "Твои подписки"
 "subscribe" = "Подписаться"
-"resubscribe" = "Переподписаться ({{ .Remark }})"
+"resubscribe" = "Resubscribe ({{ .Email }})"
 "subInfo" = "{{ .Email }} ({{ .Remaining }})"
 
 [tgbot.answers]

@@ -601,7 +601,7 @@
 "allClients" = "All Clients"
 "subscriptions" = "View your subscriptions"
 "subscribe" = "Subscribe"
-"resubscribe" = "Resubscribe ({{ .Remark }})"
+"resubscribe" = "Resubscribe ({{ .Email }})"
 "subInfo" = "{{ .Email }} ({{ .Remaining }})"
 
 [tgbot.answers]
