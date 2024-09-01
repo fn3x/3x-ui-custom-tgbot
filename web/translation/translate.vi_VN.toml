@@ -629,3 +629,4 @@
 "emailNotAvailable" = "{{ .email }} is not available. Choose another name please."
 "emptyEmail" = "Empty name is not allowed"
 "prepareLink" = "Preparing your payment link..."
+"resubscribe" = "Resubscribe ({{ .Email }})"
