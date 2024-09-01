@@ -476,8 +476,6 @@ func (s *InboundService) AddInboundClientWithTx(tx *gorm.DB, data *model.Inbound
 
 	oldClients := oldSettings["clients"].([]interface{})
 	oldClients = append(oldClients, interfaceClients...)
-	clientsJson, _ := json.MarshalIndent(oldClients, "", "  ")
-	logger.Infof("append old clients and new: ok %s", clientsJson)
 
 	oldSettings["clients"] = oldClients
 
