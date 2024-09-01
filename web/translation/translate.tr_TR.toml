@@ -588,7 +588,7 @@
 "refreshedOn" = "\r\n📋🔄 Yenilendi: {{ .Time }}\r\n\r\n"
 "yes" = "✅ Evet"
 "no" = "❌ Hayır"
-"confirmationURL" = "Your payment link: {{ .ConfirmationURL }}"
+"confirmationURL" = "Your payment link ({{ .Email }}): {{ .ConfirmationURL }}"
 
 [tgbot.buttons]
 "closeKeyboard" = "❌ Klavyeyi Kapat"

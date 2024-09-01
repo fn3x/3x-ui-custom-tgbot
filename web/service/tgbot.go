@@ -1664,14 +1664,13 @@ func (t *Tgbot) sendSubscriptions(chatId int64, tgUserId int64) {
 
 	var buttons []telego.InlineKeyboardButton
 
-	keyboard := tu.InlineKeyboard(tu.InlineKeyboardRow(
-		tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.subscribe")).WithCallbackData(t.encodeQuery("subscribe"))))
-
 	if len(traffics) == 0 {
 		msg += t.I18nBot("tgbot.firstSub")
-		t.SendMsgToTgbot(chatId, msg, keyboard)
+		t.SendMsgToTgbot(chatId, msg, nil)
 		return
 	}
+
+	keyboard := tu.InlineKeyboard()
 
 	for _, traffic := range traffics {
 		msg += t.clientInfoMsg(traffic, true, true, true, true, true, true)
@@ -1684,7 +1683,7 @@ func (t *Tgbot) sendSubscriptions(chatId int64, tgUserId int64) {
 		remainingSeconds := traffic.ExpiryTime/1000 - now
 		if remainingSeconds < 0 {
 			// expired
-			buttons = append(buttons, tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.subInfo", "Email=="+traffic.Email, "Remaining=="+"expired")).WithCallbackData(t.encodeQuery("subInfo "+traffic.Email)))
+			buttons = append(buttons, tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.subInfo", "Email=="+traffic.Email, "Remaining=="+"expired")).WithCallbackData(t.encodeQuery("subscribe "+traffic.Email)))
 		} else {
 			buttons = append(buttons, tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.subInfo", "Email=="+traffic.Email, "Remaining=="+string(remainingSeconds))).WithCallbackData(t.encodeQuery("subInfo "+traffic.Email)))
 		}
@@ -1771,7 +1770,7 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64, email string
 		}
 
 		tx.Commit()
-		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.messages.confirmationURL", "ConfirmationURL=="+confirmationURL))
+		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.messages.confirmationURL", "ConfirmationURL=="+confirmationURL, "Email=="+email))
 	}()
 
 	dbPayment.Status = response.Status
