@@ -1764,11 +1764,12 @@ func (t *Tgbot) sendSubscriptions(chatId int64, tgUserId int64) {
 
 	var buttons []telego.InlineKeyboardButton
 
-	buttons = append(buttons, tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.subscribe")))
+	keyboard := tu.InlineKeyboard(tu.InlineKeyboardRow(
+		tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.subscribe"))))
+
 	if len(traffics) == 0 {
 		msg += t.I18nBot("tgbot.firstSub")
-		inlineKeyboard := tu.InlineKeyboard(tu.InlineKeyboardRow(buttons...))
-		t.SendMsgToTgbot(chatId, msg, inlineKeyboard)
+		t.SendMsgToTgbot(chatId, msg, keyboard)
 		return
 	}
 
@@ -1789,23 +1790,9 @@ func (t *Tgbot) sendSubscriptions(chatId int64, tgUserId int64) {
 		}
 	}
 
-	var rows [][]telego.InlineKeyboardButton
-	switch len(buttons) {
-	case 0:
-		t.SendMsgToTgbot(chatId, msg)
-		return
-	case 1:
-	case 2:
-	case 3:
-		rows = append(rows, tu.InlineKeyboardRow(buttons...))
-	default:
-		for _, button := range buttons {
-			rows = append(rows, tu.InlineKeyboardRow(button))
-		}
-	}
+	keyboard.InlineKeyboard = append(keyboard.InlineKeyboard, tu.InlineKeyboardCols(2, buttons...)...)
 
-	inlineKeyboard := tu.InlineKeyboard(rows...)
-	t.SendMsgToTgbot(chatId, msg, inlineKeyboard)
+	t.SendMsgToTgbot(chatId, msg, keyboard)
 }
 
 func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64, email string) {
