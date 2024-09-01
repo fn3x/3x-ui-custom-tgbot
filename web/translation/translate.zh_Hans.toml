@@ -624,7 +624,7 @@
 "getBanLogs" = "禁止日志"
 "subscriptions" = "View your subscriptions"
 "subscribe" = "Subscribe"
-"resubscribe" = "Resubscribe ({{ .Remark }})"
+"resubscribe" = "Resubscribe ({{ .Email }})"
 "subInfo" = "{{ .Email }} ({{ .Remaining }})"
 
 [tgbot.answers]
