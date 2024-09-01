@@ -2102,10 +2102,10 @@ func (t *Tgbot) handleSucceededPayment(tx *gorm.DB, payment *model.Payment) (app
 	}
 	logger.Debug("get client by email: ok")
 
-	expiryTime := time.Now().AddDate(0, 1, 0)
+	expiryTime := time.Now().UTC().AddDate(0, 1, 0)
 
 	if client != nil {
-		logger.Info("client is not nil: ok")
+		logger.Debug("client is not nil: ok")
 		client.ExpiryTime = expiryTime.Unix()
 		err := t.inboundService.UpdateClientStat(tx, payment.Email, client)
 		if err != nil {
@@ -2114,6 +2114,7 @@ func (t *Tgbot) handleSucceededPayment(tx *gorm.DB, payment *model.Payment) (app
 			return false, err
 		}
 		logger.Debug("update client stat: ok")
+		return true, nil
 	} else {
 		logger.Debug("client is nil: ok")
 		allInbounds, err := t.inboundService.GetAllInbounds()
