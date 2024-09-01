@@ -1765,7 +1765,7 @@ func (t *Tgbot) sendSubscriptions(chatId int64, tgUserId int64) {
 	var buttons []telego.InlineKeyboardButton
 
 	keyboard := tu.InlineKeyboard(tu.InlineKeyboardRow(
-		tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.subscribe"))))
+		tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.subscribe")).WithCallbackData(t.encodeQuery("subscribe"))))
 
 	if len(traffics) == 0 {
 		msg += t.I18nBot("tgbot.firstSub")
