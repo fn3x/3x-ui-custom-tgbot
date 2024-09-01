@@ -633,3 +633,4 @@
 "subscribe" = "Подписаться"
 "subscriptions" = "Подписки"
 "prepareLink" = "Подготавливаю ссылку для оплаты..."
+"resubscribe" = "Переподписаться ({{ .Email }})"

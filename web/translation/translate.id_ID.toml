@@ -632,3 +632,4 @@
 "subscribe" = "Subscribe"
 "subscriptions" = "Subscriptions"
 "prepareLink" = "Preparing your payment link..."
+"resubscribe" = "Resubscribe ({{ .Email }})"
