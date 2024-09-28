@@ -4,16 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"net/http"
-	"os"
 
 	"x-ui/database/model"
 
 	"github.com/savsgio/gotils/uuid"
-)
-
-var (
-	SHOP_ID = os.Getenv("YOO_SHOP_ID")
-	API_KEY = os.Getenv("YOO_API_KEY")
 )
 
 type Amount struct {
@@ -61,12 +55,12 @@ type PaymentResponse struct {
 	Parameter   string `json:"parameter"`
 }
 
-func createPayment(payment PaymentRequest) (PaymentResponse, error) {
+func createPayment(payment PaymentRequest, shopId int, apiKey string) (PaymentResponse, error) {
 	data, _ := json.Marshal(payment)
 	req, _ := http.NewRequest("POST", "https://api.yookassa.ru/v3/payments", bytes.NewBuffer(data))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Idempotence-Key", uuid.V4())
-	req.SetBasicAuth(SHOP_ID, API_KEY)
+	req.SetBasicAuth(string(shopId), apiKey)
 
 	client := &http.Client{}
 	resp, err := client.Do(req)

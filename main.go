@@ -323,6 +323,34 @@ func removeSecret() {
 	fmt.Println("Secret removed successfully.")
 }
 
+func updateYookassaAPI(shopId int, apiKey string) {
+	err := database.InitDB(config.GetDBPath())
+	if err != nil {
+		fmt.Println("Database initialization failed:", err)
+		return
+	}
+
+	settingService := service.SettingService{}
+
+	if shopId > 0 {
+		err := settingService.SetYookassaShopId(shopId)
+		if err != nil {
+			fmt.Println("Failed to set shop id:", err)
+		} else {
+			fmt.Printf("Shop id set successfully: %v\n", shopId)
+		}
+	}
+
+	if apiKey != "" {
+		err := settingService.SetYookassaApiKey(apiKey)
+		if err != nil {
+			fmt.Println("Failed to set yookassa API key:", err)
+		} else {
+			fmt.Println("Yookassa API key set successfully")
+		}
+	}
+}
+
 func main() {
 	if len(os.Args) < 2 {
 		runWebServer()
@@ -339,6 +367,8 @@ func main() {
 	var username string
 	var password string
 	var webBasePath string
+	var yookassaShopId int
+	var yookassaApiKey string
 	var webCertFile string
 	var webKeyFile string
 	var tgbottoken string
@@ -355,6 +385,8 @@ func main() {
 	settingCmd.StringVar(&username, "username", "", "Set login username")
 	settingCmd.StringVar(&password, "password", "", "Set login password")
 	settingCmd.StringVar(&webBasePath, "webBasePath", "", "Set base path for Panel")
+	settingCmd.IntVar(&yookassaShopId, "shopId", 0, "Set shop id for yookassa API")
+	settingCmd.StringVar(&yookassaApiKey, "apiKey", "", "Set key for yookassa API")
 	settingCmd.StringVar(&webCertFile, "webCert", "", "Set path to public key file for panel")
 	settingCmd.StringVar(&webKeyFile, "webCertKey", "", "Set path to private key file for panel")
 	settingCmd.StringVar(&tgbottoken, "tgbottoken", "", "Set token for Telegram bot")
@@ -410,6 +442,9 @@ func main() {
 		}
 		if enabletgbot {
 			updateTgbotEnableSts(enabletgbot)
+		}
+		if yookassaShopId > 0 || yookassaApiKey != "" {
+			updateYookassaAPI(yookassaShopId, yookassaApiKey)
 		}
 	case "cert":
 		err := settingCmd.Parse(os.Args[2:])
