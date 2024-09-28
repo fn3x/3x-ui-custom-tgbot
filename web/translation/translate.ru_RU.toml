@@ -598,6 +598,9 @@
 "subscribe" = "Подписаться"
 "resubscribe" = "Переподписаться ({{ .Remark }})"
 "allClients" = "Все клиенты"
+"subscriptions" = "Твои подписки"
+"subscribe" = "Подписаться"
+"resubscribe" = "Переподписаться ({{ .Remark }})"
 
 [tgbot.answers]
 "successfulOperation" = "✅ Успешный!"
