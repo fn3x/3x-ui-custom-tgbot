@@ -621,11 +621,13 @@
 "subscriptions" = "View your subscriptions"
 "subscribe" = "Subscribe"
 "resubscribe" = "Resubscribe ({{ .Remark }})"
+"allClients" = "所有客户"
 
 [tgbot.answers]
 "successfulOperation" = "✅ 成功！"
 "errorOperation" = "❗ 操作错误。"
 "getInboundsFailed" = "❌ 获取入站信息失败。"
+"getClientsFailed" = "❌ 获取客户失败。"
 "canceled" = "❌ {{ .Email }}：操作已取消。"
 "clientRefreshSuccess" = "✅ {{ .Email }}：客户端刷新成功。"
 "IpRefreshSuccess" = "✅ {{ .Email }}：IP 刷新成功。"
@@ -643,3 +645,6 @@
 "askToAddUserId" = "未找到您的配置！\r\n请向管理员询问，在您的配置中使用您的 Telegram 用户 ID。\r\n\r\n您的用户 ID：<code>{{ .TgUserID }}</code>"
 "subscriptions" = "Your subscriptions:"
 "subscribe" = "Preparing yookassa for a payment..."
+"askToAddUserId" = "未找到您的配置！\r\n请向管理员询问，在您的配置中使用您的 Telegram 用户 ChatID。\r\n\r\n您的用户 ChatID：<code>{{ .TgUserID }}</code>"
+"chooseClient" = "为入站 {{ .Inbound }} 选择一个客户"
+"chooseInbound" = "选择一个入站"

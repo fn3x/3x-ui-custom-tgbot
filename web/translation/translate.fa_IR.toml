@@ -621,11 +621,13 @@
 "subscriptions" = "View your subscriptions"
 "subscribe" = "Subscribe"
 "resubscribe" = "Resubscribe ({{ .Remark }})"
+"allClients" = "همه مشتریان"
 
 [tgbot.answers]
 "successfulOperation" = "✅ انجام شد!"
 "errorOperation" = "❗ خطا در عملیات."
 "getInboundsFailed" = "❌ دریافت ورودی‌ها با خطا مواجه شد."
+"getClientsFailed" = "❌ دریافت مشتریان با شکست مواجه شد."
 "canceled" = "❌ {{ .Email }} : عملیات لغو شد."
 "clientRefreshSuccess" = "✅ {{ .Email }} : کلاینت با موفقیت تازه‌سازی شد."
 "IpRefreshSuccess" = "✅ {{ .Email }} : آدرس‌ها با موفقیت تازه‌سازی شدند."
@@ -643,3 +645,5 @@
 "askToAddUserId" = "پیکربندی شما یافت نشد!\r\nلطفاً از مدیر خود بخواهید که شناسه کاربر تلگرام خود را در پیکربندی (های) خود استفاده کند.\r\n\r\nشناسه کاربری شما: <code>{{ .TgUserID }}</code>"
 "subscriptions" = "Your subscriptions:"
 "subscribe" = "Preparing yookassa for a payment..."
+"chooseClient" = "یک مشتری برای ورودی {{ .Inbound }} انتخاب کنید"
+"chooseInbound" = "یک ورودی انتخاب کنید"

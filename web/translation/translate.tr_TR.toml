@@ -621,11 +621,13 @@
 "subscriptions" = "View your subscriptions"
 "subscribe" = "Subscribe"
 "resubscribe" = "Resubscribe ({{ .Remark }})"
+"allClients" = "Tüm Müşteriler"
 
 [tgbot.answers]
 "successfulOperation" = "✅ İşlem başarılı!"
 "errorOperation" = "❗ İşlemde hata."
 "getInboundsFailed" = "❌ Gelenler alınamadı."
+"getClientsFailed" = "❌ Müşteriler alınamadı."
 "canceled" = "❌ {{ .Email }}: İşlem iptal edildi."
 "clientRefreshSuccess" = "✅ {{ .Email }}: Müşteri başarıyla yenilendi."
 "IpRefreshSuccess" = "✅ {{ .Email }}: IP'ler başarıyla yenilendi."
@@ -643,3 +645,5 @@
 "askToAddUserId" = "Yapılandırmanız bulunamadı!\r\nLütfen yöneticinizden yapılandırmalarınıza Telegram ID'nizi eklemesini isteyin.\r\n\r\nKullanıcı ID'niz: <code>{{ .TgUserID }}</code>"
 "subscriptions" = "Your subscriptions:"
 "subscribe" = "Preparing yookassa for a payment..."
+"chooseClient" = "Gelen {{ .Inbound }} için bir Müşteri Seçin"
+"chooseInbound" = "Bir Gelen Seçin"

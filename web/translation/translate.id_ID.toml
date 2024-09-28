@@ -621,11 +621,13 @@
 "subscriptions" = "View your subscriptions"
 "subscribe" = "Subscribe"
 "resubscribe" = "Resubscribe ({{ .Remark }})"
+"allClients" = "Semua Klien"
 
 [tgbot.answers]
 "successfulOperation" = "✅ Operasi berhasil!"
 "errorOperation" = "❗ Kesalahan dalam operasi."
 "getInboundsFailed" = "❌ Gagal mendapatkan inbounds."
+"getClientsFailed" = "❌ Gagal mendapatkan klien."
 "canceled" = "❌ {{ .Email }}: Operasi dibatalkan."
 "clientRefreshSuccess" = "✅ {{ .Email }}: Klien diperbarui dengan berhasil."
 "IpRefreshSuccess" = "✅ {{ .Email }}: IP diperbarui dengan berhasil."
@@ -643,3 +645,5 @@
 "askToAddUserId" = "Konfigurasi Anda tidak ditemukan!\r\nSilakan minta admin Anda untuk menggunakan ID Telegram Anda dalam konfigurasi Anda.\r\n\r\nID Pengguna Anda: <code>{{ .TgUserID }}</code>"
 "subscriptions" = "Your subscriptions:"
 "subscribe" = "Preparing yookassa for a payment..."
+"chooseClient" = "Pilih Klien untuk Inbound {{ .Inbound }}"
+"chooseInbound" = "Pilih Inbound"

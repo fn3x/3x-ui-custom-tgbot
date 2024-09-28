@@ -621,11 +621,13 @@
 "subscriptions" = "View your subscriptions"
 "subscribe" = "Subscribe"
 "resubscribe" = "Resubscribe ({{ .Remark }})"
+"allClients" = "Tất cả Khách hàng"
 
 [tgbot.answers]
 "successfulOperation" = "✅ Thành công!"
 "errorOperation" = "❗ Lỗi Trong Quá Trình Thực Hiện."
 "getInboundsFailed" = "❌ Không Thể Lấy Được Inbounds"
+"getClientsFailed" = "❌ Không thể lấy khách hàng."
 "canceled" = "❌ {{ .Email }} : Thao Tác Đã Bị Hủy."
 "clientRefreshSuccess" = "✅ {{ .Email }} : Cập Nhật Thành Công Cho Khách Hàng."
 "IpRefreshSuccess" = "✅ {{ .Email }} : Cập Nhật Thành Công Cho IPs."
@@ -643,3 +645,5 @@
 "askToAddUserId" = "Cấu hình của bạn không được tìm thấy!\r\nVui lòng yêu cầu Quản trị viên sử dụng ID người dùng telegram của bạn trong cấu hình của bạn.\r\n\r\nID người dùng của bạn: <code>{{ .TgUserID }}</code>"
 "subscriptions" = "Your subscriptions:"
 "subscribe" = "Preparing yookassa for a payment..."
+"chooseClient" = "Chọn một Khách hàng cho Inbound {{ .Inbound }}"
+"chooseInbound" = "Chọn một Inbound"

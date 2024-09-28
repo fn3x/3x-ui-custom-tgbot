@@ -621,11 +621,13 @@
 "subscriptions" = "View your subscriptions"
 "subscribe" = "Subscribe"
 "resubscribe" = "Resubscribe ({{ .Remark }})"
+"allClients" = "Всі Клієнти"
 
 [tgbot.answers]
 "successfulOperation" = "✅ Операція успішна!"
 "errorOperation" = "❗ Помилка в роботі."
 "getInboundsFailed" = "❌ Не вдалося отримати вхідні повідомлення."
+"getClientsFailed" = "❌ Не вдалося отримати клієнтів."
 "canceled" = "❌ {{ .Email }}: Операцію скасовано."
 "clientRefreshSuccess" = "✅ {{ .Email }}: Клієнт успішно оновлено."
 "IpRefreshSuccess" = "✅ {{ .Email }}: IP-адреси успішно оновлено."
@@ -643,3 +645,5 @@
 "askToAddUserId" = "Вашу конфігурацію не знайдено!\r\nБудь ласка, попросіть свого адміністратора використовувати ваш ідентифікатор Telegram у вашій конфігурації.\r\n\r\nВаш ідентифікатор користувача: <code>{{ .TgUserID }}</code>"
 "subscriptions" = "Your subscriptions:"
 "subscribe" = "Preparing yookassa for a payment..."
+"chooseClient" = "Виберіть клієнта для Вхідного {{ .Inbound }}"
+"chooseInbound" = "Виберіть Вхідний"
