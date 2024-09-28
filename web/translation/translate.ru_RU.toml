@@ -621,11 +621,13 @@
 "subscriptions" = "Твои подписки"
 "subscribe" = "Подписаться"
 "resubscribe" = "Переподписаться ({{ .Remark }})"
+"allClients" = "Все клиенты"
 
 [tgbot.answers]
 "successfulOperation" = "✅ Успешный!"
 "errorOperation" = "❗ Ошибка в операции."
 "getInboundsFailed" = "❌ Не удалось получить входящие потоки."
+"getClientsFailed" = "❌ Не удалось получить клиентов."
 "canceled" = "❌ {{ .Email }}: Операция отменена."
 "clientRefreshSuccess" = "✅ {{ .Email }}: Клиент успешно обновлен."
 "IpRefreshSuccess" = "✅ {{ .Email }}: IP-адреса успешно обновлены."
@@ -643,3 +645,5 @@
 "askToAddUserId" = "Ваша конфигурация не найдена!\r\nПожалуйста, попросите администратора использовать ваш идентификатор пользователя Telegram в ваших конфигурациях.\r\n\r\nВаш идентификатор пользователя: <code>{{ .TgUserID }}</code>"
 "subscriptions" = "Ваши подписки:"
 "subscribe" = "Подготавливаем ссылку для оплаты..."
+"chooseClient" = "Выберите пользователя для подключения {{ .Inbound }}"
+"chooseInbound" = "Выберите подключение"
