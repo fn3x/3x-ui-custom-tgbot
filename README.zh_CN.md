@@ -341,19 +341,6 @@ location /sub {
 **示例：**
 - `http://ip:port/*webbasepath*/panel`
 - `http://domain:port/*webbasepath*/panel`
-
-- **端口：** 2053
-- **用户名 & 密码：** 当您跳过设置时，此项会随机生成。
-- **数据库路径：**
-  - /etc/x-ui/x-ui.db
-- **Xray 配置路径：**
-  - /usr/local/x-ui/bin/config.json
-- **面板链接（无SSL）：**
-  - http://ip:2053/panel
-  - http://domain:2053/panel
-- **面板链接（有SSL）：**
-  - https://domain:2053/panel
-
 </details>
 
 ## WARP 配置
@@ -388,6 +375,19 @@ WARP 已内置，无需额外安装。只需在面板中开启相关配置即可
 1. 在终端中运行 `x-ui` 命令，然后选择 `IP 限制管理`。
 2. 您将看到以下选项：
 
+   - **更改封禁时长:** 调整封禁时长。
+   - **解除所有封禁:** 解除当前的所有封禁。
+   - **查看日志:** 查看日志。
+   - **Fail2ban 状态:** 检查 `fail2ban` 的状态。
+   - **重启 Fail2ban:** 重启 `fail2ban` 服务。
+   - **卸载 Fail2ban:** 卸载带有配置的 Fail2ban。
+
+  - 确保您的 Xray 配置上有 ./access.log 。在 v2.1.3 之后，我们有一个选项。
+
+- **对于 `v2.1.3` 之前的版本：**
+  - 您需要在 Xray 配置中手动设置访问日志路径：
+
+    ```sh
     1. 使用面板内置的 `x-ui` 指令
     2. 选择 `IP Limit Management`.
     3. 根据您的需要选择合适的选项。

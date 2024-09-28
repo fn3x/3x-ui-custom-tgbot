@@ -294,6 +294,27 @@ Nuestra plataforma ofrece compatibilidad con una amplia gama de arquitecturas y 
   Puedes realizar copias de seguridad y restauraciones de la base de datos directamente desde el panel.
 
 - **Ruta de la Base de Datos:**
+  - `/etc/x-ui/x-ui.db`
+
+### Ruta Base Web
+
+1. **Restablecer la Ruta Base Web:**
+   - Abre tu terminal.
+   - Ejecuta el comando `x-ui`.
+   - Selecciona la opción `Restablecer la Ruta Base Web`.
+
+2. **Generar o Personalizar la Ruta:**
+   - La ruta se generará aleatoriamente, o puedes ingresar una ruta personalizada.
+
+3. **Ver Configuración Actual:**
+   - Para ver tu configuración actual, utiliza el comando `x-ui settings` en el terminal o selecciona `Ver Configuración Actual` en `x-ui`.
+
+### Recomendación de Seguridad:
+- Para mayor seguridad, utiliza una palabra larga y aleatoria en la estructura de tu URL.
+
+**Ejemplos:**
+- `http://ip:port/*webbasepath*/panel`
+- `http://domain:port/*webbasepath*/panel`
   - /etc/x-ui/x-ui.db
 - **Ruta de Configuración de Xray:**
   - /usr/local/x-ui/bin/config.json
@@ -334,6 +355,18 @@ WARP está integrado, no se requiere instalación adicional. Simplemente habilit
 
 Para habilitar la funcionalidad de límite de IP, necesitas instalar `fail2ban` y los archivos requeridos siguiendo estos pasos:
 
+    1. Usa el comando `x-ui` dentro de la terminal.
+    2. Selecciona `Gestión de Límite de IP`.
+    3. Elige las opciones apropiadas según tus necesidades.
+
+  - asegúrate de tener ./access.log en tu Configuración de Xray después de la v2.1.3 tenemos una opción para ello
+
+3. Agrega una ruta para el registro de acceso en el panel configurando `Xray Configs/log/Access log` a `./access.log`, luego guarda y reinicia Xray.
+
+- **Para versiones anteriores a `v2.1.3`:**
+  - Necesitas configurar manualmente la ruta del registro de acceso en tu configuración de Xray:
+
+    ```sh
     1. Usa el comando `x-ui` dentro de la terminal.
     2. Selecciona `Gestión de Límite de IP`.
     3. Elige las opciones apropiadas según tus necesidades.
