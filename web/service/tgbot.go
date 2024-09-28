@@ -3,6 +3,7 @@ package service
 import (
 	"embed"
 	"errors"
+	"encoding/json"
 	"fmt"
 	"net"
 	"net/url"
@@ -1815,7 +1816,7 @@ func (t *Tgbot) sendSubscriptions(chatId int64, tgUserId int64) {
 func (t *Tgbot) sendPaymentLink(chatId int64, tgUserId int64) {
 	returnUrl, err := t.GetMyLink()
 	if err != nil {
-		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.messages.errorOperation"))
+		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
 		return
 	}
 
@@ -1838,7 +1839,7 @@ func (t *Tgbot) sendPaymentLink(chatId int64, tgUserId int64) {
 	response, err := createPayment(payment)
 	if err != nil {
 		logger.Errorf("Couldn't create payment. Reason: %s", err.Error())
-		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.messages.errorOperation"))
+		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
 		return
 	}
 
@@ -1851,8 +1852,9 @@ func (t *Tgbot) sendPaymentLink(chatId int64, tgUserId int64) {
 			t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.messages.confirmationURL", "ConfirmationURL=="+confirmationURL))
 		} else {
 			tx.Rollback()
-			logger.Errorf("Couldn't save payment to db. Rolled back transaction.\nResponse: %s\nReason: %s", response, err.Error())
-			t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.messages.errorOperation"))
+			prettyResponse, _ := json.MarshalIndent(response, "", "    ")
+			logger.Errorf("Couldn't save payment to db. Rolled back transaction.\nResponse: %s\nReason: %s", string(prettyResponse), err.Error())
+			t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
 		}
 	}()
 
