@@ -600,8 +600,8 @@
 "getBanLogs" = "Cấm nhật ký"
 "subscriptions" = "View your subscriptions"
 "subscribe" = "Subscribe"
-"resubscribe" = "Resubscribe ({{ .Remark }})"
 "allClients" = "Tất cả Khách hàng"
+"resubscribe" = "Resubscribe ({{ .Email }})"
 "subInfo" = "{{ .Email }} ({{ .Remaining }})"
 
 [tgbot.answers]

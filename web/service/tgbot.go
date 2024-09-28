@@ -305,21 +305,24 @@ func (t *Tgbot) answerCommand(message *telego.Message, chatId int64, isAdmin boo
 		if len(commandArgs) > 0 {
 			emails, err := t.inboundService.getAllEmails()
 			if err != nil {
-				t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
-				return
+				msg += t.I18nBot("tgbot.answers.errorOperation")
+				break
 			}
 
 			userEmail := commandArgs[0]
 			for _, email := range emails {
 				if email == userEmail {
-					t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.emailNotAvailable"))
-					return
+					msg += t.I18nBot("tgbot.answers.emailNotAvailable")
+					break
 				}
 			}
 
+			if msg != "" {
+				break
+			}
+
 			fromID := int64(message.From.ID)
-			t.sendSinglePaymentLink(chatId, fromID, userEmail)
-			return
+			msg += t.getPaymentLink(chatId, fromID, userEmail)
 		} else {
 			msg += t.I18nBot("tgbot.commands.needEmail")
 		}
@@ -904,6 +907,15 @@ func (t *Tgbot) answerCallback(callbackQuery *telego.CallbackQuery, isAdmin bool
 			tgUserID := callbackQuery.From.ID
 			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.subscriptions"))
 			t.sendSubscriptions(chatId, tgUserID)
+		}
+	} else if len(dataArray) == 2 {
+		switch dataArray[0] {
+		case "resubscribe":
+			tgUserID := callbackQuery.From.ID
+			email := dataArray[1]
+			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.resubscribe", "Email=="+email))
+			msg := t.getPaymentLink(chatId, tgUserID, email)
+			t.SendMsgToTgbot(chatId, msg)
 		}
 	}
 }
@@ -1783,7 +1795,7 @@ func (t *Tgbot) sendSubscriptions(chatId int64, tgUserId int64) {
 		remainingSeconds := traffic.ExpiryTime/1000 - now
 		if remainingSeconds < 0 {
 			// expired
-			buttons = append(buttons, tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.subInfo", "Email=="+traffic.Email, "Remaining=="+"expired")).WithCallbackData(t.encodeQuery("subscribe "+traffic.Email)))
+			buttons = append(buttons, tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.subInfo", "Email=="+traffic.Email, "Remaining=="+"expired")).WithCallbackData(t.encodeQuery("resubscribe "+traffic.Email)))
 		} else {
 			buttons = append(buttons, tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.subInfo", "Email=="+traffic.Email, "Remaining=="+string(remainingSeconds))).WithCallbackData(t.encodeQuery("subInfo "+traffic.Email)))
 		}
@@ -1794,11 +1806,10 @@ func (t *Tgbot) sendSubscriptions(chatId int64, tgUserId int64) {
 	t.SendMsgToTgbot(chatId, msg, keyboard)
 }
 
-func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64, email string) {
+func (t *Tgbot) getPaymentLink(chatId int64, tgUserId int64, email string) string {
 	returnUrl, err := t.GetMyLink()
 	if err != nil {
-		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
-		return
+		return t.I18nBot("tgbot.answers.errorOperation")
 	}
 
 	payment := SinglePaymentRequest{}
@@ -1806,8 +1817,7 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64, email string
 	emailForReceipt, err := t.settingService.GetEmail()
 	if err != nil {
 		logger.Errorf("Couldn't get email for receipts. Reason: %s", err.Error())
-		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
-		return
+		return t.I18nBot("tgbot.answers.errorOperation")
 	}
 
 	var isTest bool
@@ -1842,8 +1852,7 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64, email string
 	apiKey, err := t.settingService.GetYookassaApiKey()
 	if err != nil {
 		logger.Errorf("Couldn't get yookassa credentials. Reason: %s", err.Error())
-		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
-		return
+		return t.I18nBot("tgbot.answers.errorOperation")
 	}
 	prettyRequest, _ := json.MarshalIndent(payment, "", "  ")
 	logger.Debugf("Request:%s\r\n", prettyRequest)
@@ -1851,8 +1860,7 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64, email string
 	response, err := createPayment(payment, idempotenceKey, shopId, apiKey)
 	if err != nil {
 		logger.Errorf("Couldn't create payment. Reason: %s", err.Error())
-		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
-		return
+		return t.I18nBot("tgbot.answers.errorOperation")
 	}
 
 	prettyResponse, _ := json.MarshalIndent(response, "", "  ")
@@ -1861,16 +1869,17 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64, email string
 	dbPayment := model.Payment{}
 	confirmationURL := ""
 	tx := database.GetDB().Begin()
+	paymentLink := t.I18nBot("tgbot.answers.errorOperation")
 	defer func() {
 		if err != nil {
 			tx.Rollback()
 			logger.Errorf("Couldn't create payment. Rolled back.\r\nReason: %s", err.Error())
-			t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
+			paymentLink = t.I18nBot("tgbot.answers.errorOperation")
 			return
 		}
 
 		tx.Commit()
-		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.messages.confirmationURL", "ConfirmationURL=="+confirmationURL, "Email=="+email))
+		paymentLink = t.I18nBot("tgbot.messages.confirmationURL", "ConfirmationURL=="+confirmationURL, "Email=="+email)
 	}()
 
 	dbPayment.Status = response.Status
@@ -1881,7 +1890,7 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64, email string
 	value, err := strconv.ParseFloat(response.Amount.Value, 64)
 	if err != nil {
 		logger.Errorf("Couldn't parse response amount. Response amount value: %s. Reason: %s", response.Amount.Value, err.Error())
-		return
+		return t.I18nBot("tgbot.answers.errorOperation")
 	}
 
 	dbPayment.Amount = value
@@ -1893,13 +1902,13 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64, email string
 	domain, err := t.settingService.GetWebDomain()
 	if err != nil {
 		logger.Errorf("Couldn't get web domain for %s. Reason: %s", idempotenceKey, err.Error())
-		return
+		return t.I18nBot("tgbot.answers.errorOperation")
 	}
 
 	_, client, err := t.inboundService.GetClientByEmailIfExists(email)
 	if err != nil {
 		logger.Errorf("Couldn't get client by email=%s %v", email, err)
-		return
+		return t.I18nBot("tgbot.answers.errorOperation")
 	}
 
 	webhook := Webhook{
@@ -1925,6 +1934,8 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64, email string
 	dbPayment.TgID = tgUserId
 
 	tx.Create(&dbPayment)
+
+	return paymentLink
 }
 
 func (t *Tgbot) sendBackup(chatId int64) {

@@ -600,8 +600,8 @@
 "getBanLogs" = "Dapatkan Log Pemblokiran"
 "subscriptions" = "View your subscriptions"
 "subscribe" = "Subscribe"
-"resubscribe" = "Resubscribe ({{ .Remark }})"
 "allClients" = "Semua Klien"
+"resubscribe" = "Resubscribe ({{ .Email }})"
 "subInfo" = "{{ .Email }} ({{ .Remaining }})"
 
 [tgbot.answers]

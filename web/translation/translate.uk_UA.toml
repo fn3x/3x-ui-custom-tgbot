@@ -600,7 +600,6 @@
 "getBanLogs" = "Отримати журнали заборон"
 "subscriptions" = "View your subscriptions"
 "subscribe" = "Subscribe"
-"resubscribe" = "Resubscribe ({{ .Remark }})"
 "allClients" = "Всі Клієнти"
 "subInfo" = "{{ .Email }} ({{ .Remaining }})"
 

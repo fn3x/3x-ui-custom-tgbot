@@ -600,8 +600,7 @@
 "getBanLogs" = "گزارش های بلوک را دریافت کنید"
 "subscriptions" = "View your subscriptions"
 "subscribe" = "Subscribe"
-"resubscribe" = "Resubscribe ({{ .Remark }})"
-"allClients" = "همه مشتریان"
+"resubscribe" = "Resubscribe ({{ .Email }})"
 "subInfo" = "{{ .Email }} ({{ .Remaining }})"
 
 [tgbot.answers]
