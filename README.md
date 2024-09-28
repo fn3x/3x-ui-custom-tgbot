@@ -32,14 +32,10 @@ bash <(curl -Ls https://raw.githubusercontent.com/fn3x/3x-ui-custom-tgbot/master
 
 ## Install Custom Version
 
-To install your desired version, add the version to the end of the installation command. e.g., ver `v2.3.14`:
+To install your desired version, add the version to the end of the installation command. e.g., ver `v2.3.15`:
 
 ```
-<<<<<<< HEAD
-bash <(curl -Ls https://raw.githubusercontent.com/fn3x/3x-ui-custom-tgbot/master/install.sh) v2.3.13
-=======
-bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh) v2.3.14
->>>>>>> f0165c1 (v2.3.14)
+bash <(curl -Ls https://raw.githubusercontent.com/fn3x/3x-ui-custom-tgbot/tgbot/install.sh) v2.3.15
 ```
 
 ## SSL Certificate
@@ -291,6 +287,7 @@ Our platform offers compatibility with a diverse range of architectures and devi
 - Indonesian
 - Ukrainian
 - Turkish
+- Português (Brazil)
 
 
 ## Features
