@@ -5,7 +5,10 @@ import (
 	"encoding/json"
 	"net/http"
 	"os"
+
 	"x-ui/database/model"
+
+	"github.com/savsgio/gotils/uuid"
 )
 
 var (
@@ -46,8 +49,8 @@ type PaymentResponse struct {
 		ConfirmationURL string `json:"confirmation_url"`
 	} `json:"confirmation"`
 	Status        model.PaymentStatus `json:"status"`
-	Amount        Amount `json:"amount"`
-	CreatedAt     string `json:"created_at"`
+	Amount        Amount              `json:"amount"`
+	CreatedAt     string              `json:"created_at"`
 	PaymentMethod struct {
 		Id    string `json:"id"`
 		Saved bool   `json:"saved"`
@@ -58,6 +61,7 @@ func createPayment(payment PaymentRequest) (PaymentResponse, error) {
 	data, _ := json.Marshal(payment)
 	req, _ := http.NewRequest("POST", "https://api.yookassa.ru/v3/payments", bytes.NewBuffer(data))
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Idempotence-Key", uuid.V4())
 	req.SetBasicAuth(SHOP_ID, API_KEY)
 
 	client := &http.Client{}

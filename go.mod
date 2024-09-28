@@ -15,6 +15,7 @@ require (
 	github.com/shirou/gopsutil/v4 v4.24.8
 	github.com/valyala/fasthttp v1.56.0
 	github.com/xtls/xray-core v1.8.24
+	github.com/savsgio/gotils v0.0.0-20240704082632-aef3928b8a38
 	go.uber.org/atomic v1.11.0
 	golang.org/x/text v0.18.0
 	google.golang.org/grpc v1.67.0
@@ -41,6 +42,7 @@ require (
 	github.com/go-task/slim-sprig/v3 v3.0.0 // indirect
 	github.com/google/btree v1.1.3 // indirect
 	github.com/google/pprof v0.0.0-20240910150728-a0b0bb1d4134 // indirect
+	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/context v1.1.2 // indirect
 	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/gorilla/sessions v1.4.0 // indirect
@@ -67,7 +69,6 @@ require (
 	github.com/rogpeppe/go-internal v1.13.1 // indirect
 	github.com/sagernet/sing v0.4.3 // indirect
 	github.com/sagernet/sing-shadowsocks v0.2.7 // indirect
-	github.com/savsgio/gotils v0.0.0-20240704082632-aef3928b8a38 // indirect
 	github.com/seiflotfy/cuckoofilter v0.0.0-20240715131351-a2f2c23f1771 // indirect
 	github.com/shoenig/go-m1cpu v0.1.6 // indirect
 	github.com/tklauser/go-sysconf v0.3.14 // indirect
