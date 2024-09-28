@@ -596,6 +596,9 @@
 "subscribe" = "Subscribe"
 "resubscribe" = "Resubscribe ({{ .Remark }})"
 "allClients" = "Todos los Clientes"
+"subscriptions" = "View your subscriptions"
+"subscribe" = "Subscribe"
+"resubscribe" = "Resubscribe ({{ .Remark }})"
 
 [tgbot.answers]
 "successfulOperation" = "✅ ¡Exitosa!"
@@ -617,7 +620,8 @@
 "enableSuccess" = "✅ {{ .Email }} : Habilitado exitosamente."
 "disableSuccess" = "✅ {{ .Email }} : Deshabilitado exitosamente."
 "askToAddUserId" = "¡No se encuentra su configuración!\r\nPor favor, pídale a su administrador que use su ID de usuario de Telegram en su(s) configuración(es).\r\n\r\nSu ID de usuario: <code>{{ .TgUserID }}</code>"
-"subscriptions" = "Your subscriptions:"
-"subscribe" = "Preparing yookassa for a payment..."
 "chooseClient" = "Elige un Cliente para Inbound {{ .Inbound }}"
 "chooseInbound" = "Elige un Inbound"
+"askToAddUserId" = "¡No se encuentra su configuración!\r\nPor favor, pídale a su administrador que use su ID de usuario de Telegram en su(s) configuración(es).\r\n\r\nSu ID de usuario: <code>{{ .TgUserID }}</code>"
+"subscriptions" = "Your subscriptions:"
+"subscribe" = "Preparing yookassa for a payment..."

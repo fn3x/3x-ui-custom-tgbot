@@ -595,6 +595,9 @@
 "limitTraffic" = "🚧 Trafik Sınırı"
 "getBanLogs" = "Yasak Günlüklerini Al"
 "allClients" = "Tüm Müşteriler"
+"subscriptions" = "View your subscriptions"
+"subscribe" = "Subscribe"
+"resubscribe" = "Resubscribe ({{ .Remark }})"
 
 [tgbot.answers]
 "successfulOperation" = "✅ İşlem başarılı!"
@@ -615,6 +618,8 @@
 "removedTGUserSuccess" = "✅ {{ .Email }}: Telegram Kullanıcısı başarıyla kaldırıldı."
 "enableSuccess" = "✅ {{ .Email }}: Başarıyla etkinleştirildi."
 "disableSuccess" = "✅ {{ .Email }}: Başarıyla devre dışı bırakıldı."
+"askToAddUserId" = "Yapılandırmanız bulunamadı!\r\nLütfen yöneticinizden yapılandırmalarınıza Telegram ChatID'nizi eklemesini isteyin.\r\n\r\nKullanıcı ChatID'niz: <code>{{ .TgUserID }}</code>"
+"chooseClient" = "Gelen {{ .Inbound }} için bir Müşteri Seçin"
+"chooseInbound" = "Bir Gelen Seçin"
 "subscriptions" = "Your subscriptions:"
 "subscribe" = "Preparing yookassa for a payment..."
-"chooseInbound" = "Bir Gelen Seçin"
