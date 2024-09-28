@@ -626,3 +626,7 @@
 "subscriptions" = "Your subscriptions:"
 "subscribe" = "Preparing yookassa for a payment..."
 "askToAddUserId" = "Your configuration is not found!\r\nPlease ask your admin to use your Telegram ID in your configuration(s).\r\n\r\nYour User ID: <code>{{ .TgUserID }}</code>"
+"emailNotAvailable" = "{{ .email }} is not available. Choose another name please."
+"emptyEmail" = "Empty name is not allowed"
+"subscriptions" = "Your subscriptions:\r\n"
+"prepareLink" = "Preparing your payment link..."

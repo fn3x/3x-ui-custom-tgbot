@@ -621,5 +621,6 @@
 "askToAddUserId" = "Вашу конфігурацію не знайдено!\r\nБудь ласка, попросіть свого адміністратора використовувати ваш ідентифікатор Telegram у вашій конфігурації.\r\n\r\nВаш ідентифікатор користувача: <code>{{ .TgUserID }}</code>"
 "subscriptions" = "Your subscriptions:"
 "subscribe" = "Preparing yookassa for a payment..."
-"chooseClient" = "Виберіть клієнта для Вхідного {{ .Inbound }}"
-"chooseInbound" = "Виберіть Вхідний"
+"emailNotAvailable" = "{{ .email }} is not available. Choose another name please."
+"emptyEmail" = "Empty name is not allowed"
+"prepareLink" = "Preparing your payment link..."

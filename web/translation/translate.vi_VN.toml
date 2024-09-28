@@ -621,5 +621,6 @@
 "askToAddUserId" = "Cấu hình của bạn không được tìm thấy!\r\nVui lòng yêu cầu Quản trị viên sử dụng ID người dùng telegram của bạn trong cấu hình của bạn.\r\n\r\nID người dùng của bạn: <code>{{ .TgUserID }}</code>"
 "subscriptions" = "Your subscriptions:"
 "subscribe" = "Preparing yookassa for a payment..."
-"chooseClient" = "Chọn một Khách hàng cho Inbound {{ .Inbound }}"
-"chooseInbound" = "Chọn một Inbound"
+"emailNotAvailable" = "{{ .email }} is not available. Choose another name please."
+"emptyEmail" = "Empty name is not allowed"
+"prepareLink" = "Preparing your payment link..."
