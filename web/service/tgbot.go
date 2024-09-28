@@ -823,7 +823,6 @@ func (t *Tgbot) answerCallback(callbackQuery *telego.CallbackQuery, isAdmin bool
 		dataArray = strings.Split(decodedQuery, " ")
 	}
 
-<<<<<<< HEAD
 	if len(dataArray) == 1 {
 		switch callbackQuery.Data {
 		case "get_usage":

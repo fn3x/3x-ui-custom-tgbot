@@ -623,3 +623,5 @@
 "chooseClient" = "Choose a Client for Inbound {{ .Inbound }}"
 "chooseInbound" = "Choose an Inbound"
 "firstSub" = "It seems like you haven't been a subscriber before."
+"subscriptions" = "Your subscriptions:"
+"subscribe" = "Preparing yookassa for a payment..."
