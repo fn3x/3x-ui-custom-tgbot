@@ -601,6 +601,7 @@
 "subscribe" = "Subscribe"
 "resubscribe" = "Resubscribe ({{ .Remark }})"
 "allClients" = "Всі Клієнти"
+"subInfo" = "{{ .Email }} ({{ .Remaining }})"
 
 [tgbot.answers]
 "successfulOperation" = "✅ Операція успішна!"
