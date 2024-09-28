@@ -32,10 +32,10 @@ bash <(curl -Ls https://raw.githubusercontent.com/fn3x/3x-ui-custom-tgbot/master
 
 ## Install Custom Version
 
-To install your desired version, add the version to the end of the installation command. e.g., ver `v2.4.1`:
+To install your desired version, add the version to the end of the installation command. e.g., ver `v2.4.2`:
 
 ```
-bash <(curl -Ls https://raw.githubusercontent.com/fn3x/3x-ui-custom-tgbot/tgbot/install.sh) v2.4.1
+bash <(curl -Ls https://raw.githubusercontent.com/fn3x/3x-ui-custom-tgbot/tgbot/install.sh) v2.4.2
 ```
 
 ## SSL Certificate
