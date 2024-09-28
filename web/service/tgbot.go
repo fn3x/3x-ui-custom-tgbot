@@ -246,7 +246,12 @@ func (t *Tgbot) answerCommand(message *telego.Message, chatId int64, isAdmin boo
 	// Extract the command from the Message.
 	switch command {
 	case "help":
-		msg += t.I18nBot("tgbot.commands.help")
+		if isAdmin {
+			msg += t.I18nBot("tgbot.commands.helpAdmin")
+		} else {
+			msg += t.I18nBot("tgbot.commands.help")
+		}
+
 		msg += t.I18nBot("tgbot.commands.pleaseChoose")
 	case "start":
 		msg += t.I18nBot("tgbot.commands.start", "Firstname=="+message.From.FirstName)
@@ -807,6 +812,17 @@ func (t *Tgbot) answerCallback(callbackQuery *telego.CallbackQuery, isAdmin bool
 		}
 	}
 
+	var dataArray []string
+	if callbackQuery.Data != "" {
+		// get query from hash storage
+		decodedQuery, err := t.decodeQuery(callbackQuery.Data)
+		if err != nil {
+			t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.noQuery"))
+			return
+		}
+		dataArray = strings.Split(decodedQuery, " ")
+	}
+
 	switch callbackQuery.Data {
 	case "get_usage":
 		t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.serverUsage"))
@@ -839,6 +855,18 @@ func (t *Tgbot) answerCallback(callbackQuery *telego.CallbackQuery, isAdmin bool
 	case "onlines_refresh":
 		t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.successfulOperation"))
 		t.onlineClients(chatId, callbackQuery.Message.GetMessageID())
+	case "subscriptions":
+		email := ""
+		if dataArray[0] == "subscriptions" {
+			email = dataArray[1]
+		} else {
+			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.errorOperation"))
+			return
+		}
+
+		tgUserID := callbackQuery.From.ID
+		t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.subscriptions"))
+		t.sendSubscriptions(chatId, tgUserID, email)
 	case "commands":
 		t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.commands"))
 		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.commands.helpAdminCommands"))
@@ -876,6 +904,7 @@ func (t *Tgbot) SendAnswer(chatId int64, msg string, isAdmin bool) {
 	numericKeyboardClient := tu.InlineKeyboard(
 		tu.InlineKeyboardRow(
 			tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.clientUsage")).WithCallbackData(t.encodeQuery("client_traffic")),
+			tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.subscriptions")).WithCallbackData(t.encodeQuery("subscriptions")),
 			tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.commands")).WithCallbackData(t.encodeQuery("client_commands")),
 		),
 	)
@@ -1683,6 +1712,58 @@ func (t *Tgbot) onlineClients(chatId int64, messageID ...int) {
 	} else {
 		t.SendMsgToTgbot(chatId, output, keyboard)
 	}
+}
+
+func (t *Tgbot) sendSubscriptions(chatId int64, tgUserId int64, email string) {
+	traffics, err := t.inboundService.GetClientTrafficTgBot(tgUserId)
+	msg := ""
+	if err != nil {
+		logger.Warning(err)
+		msg += t.I18nBot("tgbot.wentWrong")
+		t.SendMsgToTgbot(chatId, msg)
+		return
+	}
+
+	if len(traffics) == 0 {
+		msg += t.I18nBot("tgbot.firstSub")
+		inlineKeyboard := tu.InlineKeyboard(
+			tu.InlineKeyboardRow(
+				tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.subscribe")).WithCallbackData(t.encodeQuery("subscribe " + email + " " + strconv.Itoa(int(tgUserId)))),
+			),
+		)
+		t.SendMsgToTgbot(chatId, msg, inlineKeyboard)
+		return
+	}
+
+	var buttons []telego.InlineKeyboardButton
+	for _, traffic := range traffics {
+		if traffic.Email == email {
+			msg += t.clientInfoMsg(traffic, true, true, true, true, true, true)
+			// unlimited
+			if traffic.ExpiryTime == 0 {
+				continue
+			}
+
+			now := time.Now().Unix()
+			if traffic.ExpiryTime/1000-now < 0 {
+				_, inbound, err := t.inboundService.GetClientInboundByTrafficID(traffic.Id)
+				if err != nil {
+					logger.Warning(err)
+					continue
+				}
+
+				buttons = append(buttons, tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.resubscribe", "Remark=="+inbound.Remark)).WithCallbackData(t.encodeQuery("resubscribe "+strconv.Itoa(traffic.Id))))
+			}
+		}
+	}
+
+	if len(buttons) == 0 {
+		t.SendMsgToTgbot(chatId, msg)
+		return
+	}
+
+	inlineKeyboard := tu.InlineKeyboard(tu.InlineKeyboardRow(buttons...))
+	t.SendMsgToTgbot(chatId, msg, inlineKeyboard)
 }
 
 func (t *Tgbot) sendBackup(chatId int64) {

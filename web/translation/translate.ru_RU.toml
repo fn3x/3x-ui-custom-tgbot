@@ -595,6 +595,9 @@
 "limitTraffic" = "🚧 Лимит трафика"
 "getBanLogs" = "Логи блокировок"
 "allClients" = "Все клиенты"
+"subscriptions" = "Твои подписки"
+"subscribe" = "Подписаться"
+"resubscribe" = "Переподписаться ({{ .Remark }})"
 
 [tgbot.answers]
 "successfulOperation" = "✅ Успешный!"
