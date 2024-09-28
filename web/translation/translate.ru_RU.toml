@@ -605,7 +605,7 @@
 "subscriptions" = "Твои подписки"
 "subscribe" = "Подписаться"
 "resubscribe" = "Resubscribe ({{ .Email }})"
-"subInfo" = "{{ .Email }} ({{ .Remaining }})"
+"subscribe" = "Подписаться"
 
 [tgbot.answers]
 "successfulOperation" = "✅ Успешный!"

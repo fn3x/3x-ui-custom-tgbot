@@ -508,7 +508,7 @@
 "unknown" = "❗ Unknown command."
 "pleaseChoose" = "👇 Please choose:\r\n"
 "help" = "🤖 Welcome to this bot! It's designed to offer you a subscription to access fn3x's website.\r\n\r\n"
-"helpAdmin" = "🤖 Welcome to this bot, administrator! It's designed to offer specific data from the web panel and allows you to make modifications as needed.\r\n\r\n"
+"helpAdmin" = "🤖 Welcome to this bot! It's designed to offer specific data from the web panel and allows you to make modifications as needed.\r\n\r\n"
 "start" = "👋 Hello <i>{{ .Firstname }}</i>.\r\n"
 "welcome" = "🤖 Welcome to <b>{{ .Hostname }}</b> management bot.\r\n"
 "status" = "✅ Bot is OK!"
@@ -599,10 +599,10 @@
 "limitTraffic" = "🚧 Traffic Limit"
 "getBanLogs" = "Get Ban Logs"
 "allClients" = "All Clients"
-"subscriptions" = "View your subscriptions"
 "subscribe" = "Subscribe"
 "resubscribe" = "Resubscribe ({{ .Email }})"
 "subInfo" = "{{ .Email }} ({{ .Remaining }})"
+"subscriptions" = "View your subscriptions"
 
 [tgbot.answers]
 "successfulOperation" = "✅ Operation successful!"
@@ -636,3 +636,4 @@
 "subscriptions" = "Subscriptions"
 "prepareLink" = "Preparing your payment link..."
 "resubscribe" = "Resubscribe ({{ .Email }})"
+"firstSub" = "It seems like you haven't been a subscriber before."

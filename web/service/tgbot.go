@@ -917,6 +917,53 @@ func (t *Tgbot) answerCallback(callbackQuery *telego.CallbackQuery, isAdmin bool
 			msg := t.getPaymentLink(chatId, tgUserID, email)
 			t.SendMsgToTgbot(chatId, msg)
 		}
+	switch callbackQuery.Data {
+	case "get_usage":
+		t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.serverUsage"))
+		t.getServerUsage(chatId)
+	case "usage_refresh":
+		t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.successfulOperation"))
+		t.getServerUsage(chatId, callbackQuery.Message.GetMessageID())
+	case "inbounds":
+		t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.getInbounds"))
+		t.SendMsgToTgbot(chatId, t.getInboundUsages())
+	case "deplete_soon":
+		t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.depleteSoon"))
+		t.getExhausted(chatId)
+	case "get_backup":
+		t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.dbBackup"))
+		t.sendBackup(chatId)
+	case "get_banlogs":
+		t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.getBanLogs"))
+		t.sendBanLogs(chatId, true)
+	case "client_traffic":
+		tgUserID := callbackQuery.From.ID
+		t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.clientUsage"))
+		t.getClientUsage(chatId, tgUserID)
+	case "client_commands":
+		t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.commands"))
+		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.commands.helpClientCommands"))
+	case "onlines":
+		t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.onlines"))
+		t.onlineClients(chatId)
+	case "onlines_refresh":
+		t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.successfulOperation"))
+		t.onlineClients(chatId, callbackQuery.Message.GetMessageID())
+	case "subscriptions":
+		email := ""
+		if dataArray[0] == "subscriptions" {
+			email = dataArray[1]
+		} else {
+			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.errorOperation"))
+			return
+		}
+
+		tgUserID := callbackQuery.From.ID
+		t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.subscriptions"))
+		t.sendSubscriptions(chatId, tgUserID, email)
+	case "commands":
+		t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.commands"))
+		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.commands.helpAdminCommands"))
 	}
 }
 
@@ -1764,9 +1811,9 @@ func (t *Tgbot) onlineClients(chatId int64, messageID ...int) {
 	}
 }
 
-func (t *Tgbot) sendSubscriptions(chatId int64, tgUserId int64) {
+func (t *Tgbot) sendSubscriptions(chatId int64, tgUserId int64, email string) {
 	traffics, err := t.inboundService.GetClientTrafficTgBot(tgUserId)
-	msg := t.I18nBot("tgbot.answers.subscriptions") + "\r\n"
+	msg := ""
 	if err != nil {
 		logger.Warning(err)
 		msg += t.I18nBot("tgbot.wentWrong")
