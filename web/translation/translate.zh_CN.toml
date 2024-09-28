@@ -623,3 +623,8 @@
 "chooseInbound" = "选择一个入站"
 "subscriptions" = "Your subscriptions:"
 "subscribe" = "Preparing yookassa for a payment..."
+"askToAddUserId" = "未找到您的配置！\r\n请向管理员询问，在您的配置中使用您的 Telegram 用户 ID。\r\n\r\n您的用户 ID：<code>{{ .TgUserID }}</code>"
+"emailNotAvailable" = "{{ .email }} is not available. Choose another name please."
+"emptyEmail" = "Empty name is not allowed"
+"subscriptions" = "Your subscriptions:\r\n"
+"prepareLink" = "Preparing your payment link..."

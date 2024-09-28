@@ -623,3 +623,7 @@
 "chooseInbound" = "Выберите подключение"
 "subscriptions" = "Ваши подписки:"
 "subscribe" = "Подготавливаем ссылку для оплаты..."
+"emailNotAvailable" = "{{ .email }} is not available. Choose another name please."
+"emptyEmail" = "Нельзя использовать пустое имя"
+"subscriptions" = "Ваши подписки:\r\n"
+"prepareLink" = "Подготавливаю ссылку для оплаты..."

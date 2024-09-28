@@ -858,33 +858,41 @@ func (t *Tgbot) answerCallback(callbackQuery *telego.CallbackQuery, isAdmin bool
 		case "commands":
 			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.commands"))
 			t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.commands.helpAdminCommands"))
+		case "subscriptions":
+			tgUserID := callbackQuery.From.ID
+			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.subscriptions"))
+			t.sendSubscriptions(chatId, tgUserID)
 		}
 	} else {
 		switch dataArray[0] {
-		case "subscribe":
-			email := ""
-			if dataArray[0] == "subscribe" {
-				email = dataArray[1]
-			} else {
+		case "subscribedWithEmail":
+			userEmail := dataArray[1]
+			if userEmail != "" {
+				t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.emptyEmail"))
+				return
+			}
+
+			emails, err := t.inboundService.getAllEmails()
+			if err != nil {
 				t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.errorOperation"))
 				return
 			}
 
-			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.subscribe"))
-			t.sendPaymentLink(chatId, callbackQuery.From.ID, email)
+			for _, email := range emails {
+				if email == userEmail {
+					t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.emailNotAvailable"))
+					return
+				}
+			}
 
-		case "subscriptions":
-			email := ""
-			if dataArray[0] == "subscriptions" {
-				email = dataArray[1]
-			} else {
+			traffic, err := t.inboundService.GetClientTrafficByEmail(userEmail)
+			if err != nil {
 				t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.errorOperation"))
 				return
 			}
 
-			tgUserID := callbackQuery.From.ID
-			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.subscriptions"))
-			t.sendSubscriptions(chatId, tgUserID, email)
+			t.inboundService.SetClientTelegramUserID(traffic.Id, callbackQuery.From.ID)
+			t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.successfulOperation"))
 		}
 	}
 }
@@ -1733,7 +1741,7 @@ func (t *Tgbot) onlineClients(chatId int64, messageID ...int) {
 	}
 }
 
-func (t *Tgbot) sendSubscriptions(chatId int64, tgUserId int64, email string) {
+func (t *Tgbot) sendSubscriptions(chatId int64, tgUserId int64) {
 	traffics, err := t.inboundService.GetClientTrafficTgBot(tgUserId)
 	msg := ""
 	if err != nil {
@@ -1743,50 +1751,56 @@ func (t *Tgbot) sendSubscriptions(chatId int64, tgUserId int64, email string) {
 		return
 	}
 
+	var buttons []telego.InlineKeyboardButton
+
+	buttons = append(buttons, tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.subscribeNew")).WithCallbackData(t.encodeQuery("subscribe_new "+strconv.Itoa(int(tgUserId)))))
 	if len(traffics) == 0 {
 		msg += t.I18nBot("tgbot.firstSub")
-		inlineKeyboard := tu.InlineKeyboard(
-			tu.InlineKeyboardRow(
-				tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.subscribe")).WithCallbackData(t.encodeQuery("subscribe " + email + " " + strconv.Itoa(int(tgUserId)))),
-			),
-		)
+		inlineKeyboard := tu.InlineKeyboard(tu.InlineKeyboardRow(buttons...))
 		t.SendMsgToTgbot(chatId, msg, inlineKeyboard)
 		return
 	}
 
-	var buttons []telego.InlineKeyboardButton
 	for _, traffic := range traffics {
-		if traffic.Email == email {
-			msg += t.clientInfoMsg(traffic, true, true, true, true, true, true)
-			// unlimited
-			if traffic.ExpiryTime == 0 {
+		msg += t.clientInfoMsg(traffic, true, true, true, true, true, true)
+		// unlimited
+		if traffic.ExpiryTime == 0 {
+			continue
+		}
+
+		now := time.Now().Unix()
+		if traffic.ExpiryTime/1000-now < 0 {
+			_, inbound, err := t.inboundService.GetClientInboundByTrafficID(traffic.Id)
+			if err != nil {
+				logger.Warning(err)
 				continue
 			}
 
-			now := time.Now().Unix()
-			if traffic.ExpiryTime/1000-now < 0 {
-				_, inbound, err := t.inboundService.GetClientInboundByTrafficID(traffic.Id)
-				if err != nil {
-					logger.Warning(err)
-					continue
-				}
-
-				buttons = append(buttons, tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.resubscribe", "Remark=="+inbound.Remark)).WithCallbackData(t.encodeQuery("resubscribe "+strconv.Itoa(traffic.Id))))
-			}
+			buttons = append(buttons, tu.InlineKeyboardButton(t.I18nBot("tgbot.buttons.resubscribe", "Remark=="+inbound.Remark)).WithCallbackData(t.encodeQuery("resubscribe "+strconv.Itoa(traffic.Id))))
 		}
 	}
 
-	if len(buttons) == 0 {
+	var rows [][]telego.InlineKeyboardButton
+	switch len(buttons) {
+	case 0:
 		t.SendMsgToTgbot(chatId, msg)
 		return
+	case 1:
+	case 2:
+	case 3:
+		rows = append(rows, tu.InlineKeyboardRow(buttons...))
+	default:
+		for _, button := range buttons {
+			rows = append(rows, tu.InlineKeyboardRow(button))
+		}
 	}
 
-	inlineKeyboard := tu.InlineKeyboard(tu.InlineKeyboardRow(buttons...))
+	inlineKeyboard := tu.InlineKeyboard(rows...)
 	t.SendMsgToTgbot(chatId, msg, inlineKeyboard)
 }
 
-func (t *Tgbot) sendPaymentLink(chatId int64, tgUserId int64, email string) {
-	msg := fmt.Sprintf("here is your link, %s(%d)!", email, tgUserId)
+func (t *Tgbot) sendPaymentLink(chatId int64, tgUserId int64) {
+	msg := fmt.Sprintf("here is your link, %d!", tgUserId)
 	t.SendMsgToTgbot(chatId, msg)
 }
 
