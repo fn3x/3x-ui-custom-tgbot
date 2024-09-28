@@ -54,7 +54,7 @@ type AutoPaymentRequest struct {
 }
 
 type PaymentResponse struct {
-	ID           string `json:"id"`
+	Id           string `json:"id"`
 	Confirmation struct {
 		ConfirmationURL string `json:"confirmation_url"`
 	} `json:"confirmation"`
@@ -66,13 +66,14 @@ type PaymentResponse struct {
 		Saved bool   `json:"saved"`
 		Type  string `json:"type"`
 	} `json:"payment_method"`
+	Test        bool   `json:"test"`
 	Type        string `json:"type"`
 	Code        string `json:"code"`
 	Description string `json:"description"`
 	Parameter   string `json:"parameter"`
 }
 
-func createPayment(payment any, idempotenceKey string, shopId int, apiKey string, isDev bool) (PaymentResponse, error) {
+func createPayment(payment any, idempotenceKey string, shopId int, apiKey string) (PaymentResponse, error) {
 	data, _ := json.Marshal(payment)
 	req, _ := http.NewRequest("POST", "https://api.yookassa.ru/v3/payments", bytes.NewBuffer(data))
 	req.Header.Set("Content-Type", "application/json")
