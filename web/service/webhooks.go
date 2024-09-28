@@ -6,14 +6,20 @@ import (
 	"net/http"
 	"strconv"
 
+	"x-ui/database"
+	"x-ui/database/model"
 	"x-ui/logger"
+
+	"gorm.io/gorm"
 )
 
 type WebhookEvent = string
 
 var (
-	Succeeded WebhookEvent = "payment.succeeded"
-	Canceled  WebhookEvent = "payment.canceled"
+	WaitingForCapture WebhookEvent = "payment.waiting_for_capture"
+	Pending           WebhookEvent = "payment.pending"
+	Succeeded         WebhookEvent = "payment.succeeded"
+	Canceled          WebhookEvent = "payment.canceled"
 )
 
 type Webhook struct {
@@ -28,20 +34,20 @@ type WebhookRegistered struct {
 }
 
 type WebhookNotification struct {
-	Type   string       `json:"type"`
-	Event  WebhookEvent `json:"event"`
-	Object any          `json:"object"`
+	Type   string          `json:"type"`
+	Event  WebhookEvent    `json:"event"`
+	Object PaymentResponse `json:"object"`
 }
 
 type WebhookService struct {
-	inboundService InboundService
+	database       *gorm.DB
 	settingService SettingService
-	serverService  ServerService
-	xrayService    XrayService
 }
 
 func (w *WebhookService) NewWebhookService() *WebhookService {
-	return new(WebhookService)
+	service := new(WebhookService)
+	service.database = database.GetDB()
+	return service
 }
 
 func (w *WebhookService) registerWebhook(webhook Webhook, idempotenceKey string) (WebhookRegistered, error) {
@@ -112,14 +118,29 @@ func (w *WebhookService) removeWebhook(webhookId string) {
 	}
 }
 
-func (webhookService *WebhookService) WebhookHandler(w http.ResponseWriter, r *http.Request) {
+func (w *WebhookService) WebhookHandler(wr http.ResponseWriter, r *http.Request) {
 	var notification WebhookNotification
 	if err := json.NewDecoder(r.Body).Decode(&notification); err != nil {
-		http.Error(w, "Bad Request", http.StatusBadRequest)
+		http.Error(wr, "Bad Request", http.StatusBadRequest)
 		return
 	}
 
-	logger.Infof("Webhook notification: Type=%s Event=%s Object=%s\r\n", notification.Type, notification.Event, notification.Object)
+	jsonWebhook, err := json.MarshalIndent(notification, "", "  ")
+	logger.Infof("Webhook notification: %s\r\n", jsonWebhook)
 
-	w.WriteHeader(http.StatusOK)
+	err = w.database.
+		Model(&model.Payment{}).
+		Where("payment_id = ?", notification.Object.Id).
+		Updates(model.Payment{
+			Status: notification.Object.Status,
+			PaymentMethodId: notification.Object.PaymentMethod.Id,
+			PaymentMethodType: notification.Object.PaymentMethod.Type,
+			Saved: notification.Object.PaymentMethod.Saved,
+		}).Error
+	if err != nil {
+		logger.Errorf("Couldn't update payment on webhook notification. Reason: %s", err.Error())
+		return
+	}
+
+	wr.WriteHeader(http.StatusOK)
 }

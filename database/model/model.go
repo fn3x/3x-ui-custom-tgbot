@@ -118,6 +118,7 @@ type Payment struct {
 	IdempotenceKey    string        `json:"idempotenceKey" gorm:"unique"`
 	PaymentId         string        `json:"paymentId"`
 	PaymentMethodType string        `json:"paymentMethodType"`
+	PaymentMethodId   string        `json:"paymentMethodId"`
 	Saved             bool          `json:"saved"`
 	ClientID          int64         `json:"clientId"`
 	Client            *Client       `json:"client"`

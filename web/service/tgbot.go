@@ -1869,7 +1869,7 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64) {
 	prettyRequest, _ := json.MarshalIndent(payment, "", "  ")
 	logger.Infof("Request:%s\r\n", prettyRequest)
 
-	response, err := createPayment(payment, idempotenceKey, shopId, apiKey, isTest)
+	response, err := createPayment(payment, idempotenceKey, shopId, apiKey)
 	if err != nil {
 		logger.Errorf("Couldn't create payment. Reason: %s", err.Error())
 		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.answers.errorOperation"))
@@ -1895,7 +1895,8 @@ func (t *Tgbot) sendSinglePaymentLink(chatId int64, tgUserId int64) {
 	}()
 
 	dbPayment.Status = response.Status
-	dbPayment.PaymentId = response.PaymentMethod.Id
+	dbPayment.PaymentId = response.Id
+	dbPayment.PaymentMethodId = response.PaymentMethod.Id
 	dbPayment.PaymentMethodType = response.PaymentMethod.Type
 	dbPayment.Saved = response.PaymentMethod.Saved
 	value, err := strconv.ParseFloat(response.Amount.Value, 64)
