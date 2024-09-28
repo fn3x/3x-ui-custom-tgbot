@@ -32,6 +32,9 @@ type SinglePaymentRequest struct {
 	Receipt struct {
 		Items [1]Item `json:"items"`
 	} `json:"receipt"`
+	Customer struct {
+		Email string `json:"email"`
+	} `json:"customer"`
 	Capture     bool   `json:"capture"`
 	Description string `json:"description"`
 }

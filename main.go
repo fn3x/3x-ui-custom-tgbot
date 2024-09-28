@@ -351,6 +351,24 @@ func updateYookassaAPI(shopId int, apiKey string) {
 	}
 }
 
+func updateEmail(email string) {
+	err := database.InitDB(config.GetDBPath())
+	if err != nil {
+		fmt.Println("Database initialization failed:", err)
+		return
+	}
+
+	settingService := service.SettingService{}
+	if email != "" {
+		err := settingService.SetEmail(email)
+		if err != nil {
+			fmt.Println("Failed to set email:", err)
+		} else {
+			fmt.Println("Email set successfully")
+		}
+	}
+}
+
 func main() {
 	if len(os.Args) < 2 {
 		runWebServer()
@@ -378,6 +396,7 @@ func main() {
 	var reset bool
 	var show bool
 	var remove_secret bool
+	var email string
 	settingCmd.BoolVar(&reset, "reset", false, "Reset all settings")
 	settingCmd.BoolVar(&show, "show", false, "Display current settings")
 	settingCmd.BoolVar(&remove_secret, "remove_secret", false, "Remove secret key")
@@ -393,6 +412,7 @@ func main() {
 	settingCmd.StringVar(&tgbotRuntime, "tgbotRuntime", "", "Set cron time for Telegram bot notifications")
 	settingCmd.StringVar(&tgbotchatid, "tgbotchatid", "", "Set chat ID for Telegram bot notifications")
 	settingCmd.BoolVar(&enabletgbot, "enabletgbot", false, "Enable notifications via Telegram bot")
+	settingCmd.StringVar(&email, "email", "", "Set email for receipts")
 
 	oldUsage := flag.Usage
 	flag.Usage = func() {
@@ -445,6 +465,9 @@ func main() {
 		}
 		if yookassaShopId > 0 || yookassaApiKey != "" {
 			updateYookassaAPI(yookassaShopId, yookassaApiKey)
+		}
+		if email != "" {
+			updateEmail(email)
 		}
 	case "cert":
 		err := settingCmd.Parse(os.Args[2:])

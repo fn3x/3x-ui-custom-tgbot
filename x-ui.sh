@@ -315,12 +315,24 @@ set_yookassa() {
     fi
 
     echo && echo -n -e "Enter API key: " && read api_key
-    if [[ -z "${shop_id}" ]]; then
+    if [[ -z "${api_key}" ]]; then
         LOGD "Cancelled"
         before_show_menu
     else
         /usr/local/x-ui/x-ui setting -apiKey ${api_key}
         echo -e "The API key is set"
+        confirm_restart
+    fi
+}
+
+set_email() {
+    echo && echo -n -e "Enter email for receipts: " && read email
+    if [[ -z "${email}" ]]; then
+        LOGD "Cancelled"
+        before_show_menu
+    else
+        /usr/local/x-ui/x-ui setting -email ${email}
+        echo -e "Email is set"
         confirm_restart
     fi
 }
@@ -1403,53 +1415,54 @@ show_menu() {
         check_install && set_yookassa
         ;;
     11)
-        check_install && check_config
+        check_install && set_email
         ;;
     12)
-        check_install && start
+        check_install && check_config
         ;;
     13)
-        check_install && stop
+        check_install && start
         ;;
     14)
-        check_install && restart
+        check_install && stop
         ;;
     15)
-        check_install && status
+        check_install && restart
         ;;
     16)
-        check_install && show_log
+        check_install && status
         ;;
     17)
-        check_install && enable
+        check_install && show_log
         ;;
     18)
-        check_install && disable
+        check_install && enable
         ;;
     19)
-        ssl_cert_issue_main
+        check_install && disable
         ;;
     20)
-        ssl_cert_issue_CF
+        ssl_cert_issue_main
         ;;
     21)
-        firewall_menu
-        ;;
-        iplimit_main
+        ssl_cert_issue_CF
         ;;
     22)
-        warp_cloudflare
+        iplimit_main
         ;;
     23)
-        firewall_menu
+        warp_cloudflare
         ;;
     24)
-        bbr_menu
+        firewall_menu
         ;;
     25)
-        update_geo
+        bbr_menu
         ;;
     26)
+        update_geo
+        ;;
+    27)
         run_speedtest
         ;;
     *)
