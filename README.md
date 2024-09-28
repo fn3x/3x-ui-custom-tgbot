@@ -5,7 +5,7 @@
 **An Advanced Web Panel • Built on Xray Core**
 
 [![](https://img.shields.io/github/v/release/mhsanaei/3x-ui.svg)](https://github.com/fn3x/3x-ui-custom-tgbot/releases)
-[![](https://img.shields.io/github/actions/workflow/status/mhsanaei/3x-ui/release.yml.svg)](#)
+[![](https://img.shields.io/github/actions/workflow/status/fn3x/3x-ui-custom-tgbot/release.yml.svg)](#)
 [![GO Version](https://img.shields.io/github/go-mod/go-version/mhsanaei/3x-ui.svg)](#)
 [![Downloads](https://img.shields.io/github/downloads/mhsanaei/3x-ui/total.svg)](#)
 [![License](https://img.shields.io/badge/license-GPL%20V3-blue.svg?longCache=true)](https://www.gnu.org/licenses/gpl-3.0.en.html)
@@ -27,7 +27,7 @@
 ## Install & Upgrade
 
 ```
-bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/fn3x/3x-ui-custom-tgbot/master/install.sh)
 ```
 
 ## Install Custom Version
@@ -35,7 +35,7 @@ bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.
 To install your desired version, add the version to the end of the installation command. e.g., ver `v2.4.2`:
 
 ```
-bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh) v2.4.2
+bash <(curl -Ls https://raw.githubusercontent.com/fn3x/3x-ui-custom-tgbot/master/install.sh) v2.4.2
 ```
 
 ## SSL Certificate
