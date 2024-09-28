@@ -600,7 +600,6 @@
 "getBanLogs" = "Get Ban Logs"
 "allClients" = "All Clients"
 "subscribe" = "Subscribe"
-"resubscribe" = "Resubscribe ({{ .Email }})"
 "subInfo" = "{{ .Email }} ({{ .Remaining }})"
 "subscriptions" = "View your subscriptions"
 
@@ -639,3 +638,5 @@
 "subscriptions" = "Your subscriptions:"
 "subscribe" = "Preparing yookassa for a payment..."
 "askToAddUserId" = "Your configuration is not found!\r\nPlease ask your admin to use your Telegram ID in your configuration(s).\r\n\r\nYour User ID: <code>{{ .TgUserID }}</code>"
+"chooseClient" = "Choose a Client for Inbound {{ .Inbound }}"
+"chooseInbound" = "Choose an Inbound"
