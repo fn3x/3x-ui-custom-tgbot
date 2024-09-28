@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:README.zh_CN.md
 [English](/README.md) | [中文](/README.zh_CN.md) | [Español](/README.es_ES.md) | [Русский](/README.ru_RU.md)
+========
+[English](/README.md) | [汉语](/README.zh_Hans.md) | [Español](/README.es_ES.md) | [Русский](/README.ru_RU.md)
+>>>>>>>> 1bb6942 (Русский README):README.zh_Hans.md
 
 <p align="center"><a href="#"><img src="./media/3X-UI.png" alt="Image"></a></p>
 
