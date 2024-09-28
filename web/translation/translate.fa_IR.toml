@@ -595,6 +595,9 @@
 "limitTraffic" = "🚧 محدودیت ترافیک"
 "getBanLogs" = "گزارش های بلوک را دریافت کنید"
 "allClients" = "همه مشتریان"
+"subscriptions" = "View your subscriptions"
+"subscribe" = "Subscribe"
+"resubscribe" = "Resubscribe ({{ .Remark }})"
 
 [tgbot.answers]
 "successfulOperation" = "✅ انجام شد!"
@@ -618,3 +621,5 @@
 "askToAddUserId" = "پیکربندی شما یافت نشد!\r\nلطفاً از مدیر خود بخواهید که شناسه کاربر تلگرام خود را در پیکربندی (های) خود استفاده کند.\r\n\r\nشناسه کاربری شما: <code>{{ .TgUserID }}</code>"
 "chooseClient" = "یک مشتری برای ورودی {{ .Inbound }} انتخاب کنید"
 "chooseInbound" = "یک ورودی انتخاب کنید"
+"subscriptions" = "Your subscriptions:"
+"subscribe" = "Preparing yookassa for a payment..."

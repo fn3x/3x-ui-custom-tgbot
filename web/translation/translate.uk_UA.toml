@@ -595,6 +595,9 @@
 "limitTraffic" = "🚧 Ліміт трафіку"
 "getBanLogs" = "Отримати журнали заборон"
 "allClients" = "Всі Клієнти"
+"subscriptions" = "View your subscriptions"
+"subscribe" = "Subscribe"
+"resubscribe" = "Resubscribe ({{ .Remark }})"
 
 [tgbot.answers]
 "successfulOperation" = "✅ Операція успішна!"
@@ -618,3 +621,5 @@
 "askToAddUserId" = "Вашу конфігурацію не знайдено!\r\nБудь ласка, попросіть свого адміністратора використовувати ваш ідентифікатор Telegram у вашій конфігурації.\r\n\r\nВаш ідентифікатор користувача: <code>{{ .TgUserID }}</code>"
 "chooseClient" = "Виберіть клієнта для Вхідного {{ .Inbound }}"
 "chooseInbound" = "Виберіть Вхідний"
+"subscriptions" = "Your subscriptions:"
+"subscribe" = "Preparing yookassa for a payment..."
