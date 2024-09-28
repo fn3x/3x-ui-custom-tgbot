@@ -630,3 +630,5 @@
 "emptyEmail" = "Empty name is not allowed"
 "prepareLink" = "Preparing your payment link..."
 "resubscribe" = "Resubscribe ({{ .Email }})"
+"chooseClient" = "Chọn một Khách hàng cho Inbound {{ .Inbound }}"
+"chooseInbound" = "Chọn một Inbound"

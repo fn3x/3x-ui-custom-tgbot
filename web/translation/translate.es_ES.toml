@@ -634,3 +634,5 @@
 "resubscribe" = "Resubscribe ({{ .Email }})"
 "subscriptions" = "Your subscriptions:"
 "subscribe" = "Preparing yookassa for a payment..."
+"chooseClient" = "Elige un Cliente para Inbound {{ .Inbound }}"
+"chooseInbound" = "Elige un Inbound"
