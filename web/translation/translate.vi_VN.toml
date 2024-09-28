@@ -502,6 +502,7 @@
 "clients" = "Các người dùng"
 "offline" = "🔴 Ngoại tuyến"
 "online" = "🟢 Trực tuyến"
+"firstSub" = "It's your first subscription here! We need to attach your telegram to your subscription"
 
 [tgbot.commands]
 "unknown" = "❗ Lệnh không rõ"

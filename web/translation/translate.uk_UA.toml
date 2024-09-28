@@ -502,6 +502,7 @@
 "clients" = "Клієнти"
 "offline" = "🔴 Офлайн"
 "online" = "🟢 Онлайн"
+"firstSub" = "It's your first subscription here! We need to attach your telegram to your subscription"
 
 [tgbot.commands]
 "unknown" = "❗ Невідома команда."
