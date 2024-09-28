@@ -143,6 +143,10 @@ config_after_install() {
         echo -e "${yellow}Your password will be: ${config_password}${plain}"
         read -p "Please set up the panel port: " config_port
         echo -e "${yellow}Your panel port is: ${config_port}${plain}"
+        read -p "Please set up yookassa shop id: " shop_id
+        echo -e "${yellow}Your shop id is: ${shop_id}${plain}"
+        read -p "Please set up yookassa API key: " api_key
+        echo -e "${yellow}Your API key is: ${api_key}${plain}"
         read -p "Please set up the web base path (ip:port/webbasepath/): " config_webBasePath
         echo -e "${yellow}Your web base path is: ${config_webBasePath}${plain}"
         echo -e "${yellow}Initializing, please wait...${plain}"
@@ -152,6 +156,9 @@ config_after_install() {
         echo -e "${yellow}Panel port set successfully!${plain}"
         /usr/local/x-ui/x-ui setting -webBasePath ${config_webBasePath}
         echo -e "${yellow}Web base path set successfully!${plain}"
+        /usr/local/x-ui/x-ui setting -shopId ${shop_id}
+        /usr/local/x-ui/x-ui setting -apiKey ${api_key}
+        echo -e "${yellow}Yookassa auth set successfully!${plain}"
     else
         echo -e "${red}Cancel...${plain}"
         if [[ ! -f "/etc/x-ui/x-ui.db" ]]; then
