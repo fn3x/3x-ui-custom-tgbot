@@ -50,11 +50,12 @@
             @change="checked => outbound.settings.noises = checked ? [new Outbound.FreedomSettings.Noise()] : []">
           </a-switch>
         </a-form-item>
-
-        <!-- Add Noise Button -->
-        <template v-if="outbound.settings.noises.length > 0">
-          <a-form-item label="Noises">
-            <a-button icon="plus" type="primary" size="small" @click="outbound.settings.addNoise()"></a-button>
+        <template v-if="Object.keys(outbound.settings.noise).length >0">
+          <a-form-item label='Packet'>
+            <a-input v-model.trim="outbound.settings.noise.packet"></a-input>
+          </a-form-item>
+          <a-form-item label='Delay'>
+            <a-input v-model.trim="outbound.settings.noise.delay"></a-input>
           </a-form-item>
         
         <!-- Noise Configurations -->

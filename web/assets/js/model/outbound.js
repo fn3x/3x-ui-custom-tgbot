@@ -907,20 +907,14 @@ Outbound.FreedomSettings.Fragment = class extends CommonClass {
 };
 
 Outbound.FreedomSettings.Noise = class extends CommonClass {
-    constructor(
-        type = 'rand',
-        packet = '10-20',
-        delay = '10-16'
-    ) {
+    constructor(packet = '', delay = '') {
         super();
-        this.type = type;
         this.packet = packet;
         this.delay = delay;
     }
 
     static fromJson(json = {}) {
         return new Outbound.FreedomSettings.Noise(
-            json.type,
             json.packet,
             json.delay,
         );
